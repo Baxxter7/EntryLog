@@ -7,5 +7,5 @@ public interface IAppUserRepository
     Task CreateAsync(AppUser user);
     Task UpdateAsync(AppUser user);
     Task<AppUser?> GetByUserNameAsync(string userName);
-    Task<AppUser?> GetByIdAsync(int id);
+    Task<AppUser?> GetByIdAsync(Guid id);
 }

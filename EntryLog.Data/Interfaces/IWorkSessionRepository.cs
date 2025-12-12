@@ -1,4 +1,5 @@
-﻿using EntryLog.Entities.POCOEntities;
+﻿using EntryLog.Data.Specifications;
+using EntryLog.Entities.POCOEntities;
 
 namespace EntryLog.Data.Interfaces;
 
@@ -8,5 +9,5 @@ public interface IWorkSessionRepository
     Task UpdateAsync(WorkSession workSession);
     Task<WorkSession?> GetByIdAsync(Guid id);
     Task<WorkSession?> GetByEmpleadoAsync(int id);
-    Task<IEnumerable<WorkSession>> GetAllAsync();
+    Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec);
 }

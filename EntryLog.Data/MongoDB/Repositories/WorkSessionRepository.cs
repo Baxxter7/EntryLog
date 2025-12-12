@@ -1,5 +1,6 @@
 ﻿using EntryLog.Data.Constants;
 using EntryLog.Data.Interfaces;
+using EntryLog.Data.Specifications;
 using EntryLog.Entities.POCOEntities;
 using MongoDB.Driver;
 
@@ -13,9 +14,9 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
         await _collection.InsertOneAsync(workSession);
     }
 
-    public Task<IEnumerable<WorkSession>> GetAllAsync()
+    public async Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec)
     {
-        throw new NotImplementedException();
+        return await _collection.Find(spec.Expression).ToListAsync();
     }
 
     public async Task<WorkSession?> GetByEmpleadoAsync(int id)

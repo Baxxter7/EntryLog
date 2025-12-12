@@ -2,7 +2,7 @@
 
 namespace EntryLog.Data.Specifications;
 
-internal abstract class Specification<TEntity> where TEntity : class
+public abstract class Specification<TEntity> where TEntity : class
 {
     public abstract Expression<Func<TEntity, bool>> Expression { get; set; }
 

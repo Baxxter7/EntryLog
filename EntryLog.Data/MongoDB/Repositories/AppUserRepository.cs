@@ -1,0 +1,30 @@
+﻿using EntryLog.Data.Constants;
+using EntryLog.Data.Interfaces;
+using EntryLog.Entities.POCOEntities;
+using MongoDB.Driver;
+
+namespace EntryLog.Data.MongoDB.Repositories;
+
+internal class AppUserRepository(IMongoDatabase database) : IAppUserRepository
+{
+    private readonly IMongoCollection<AppUser> _collection = database.GetCollection<AppUser>(CollectionNames.Users);
+    public async Task CreateAsync(AppUser user)
+    {
+        await _collection.InsertOneAsync(user);
+    }
+
+    public async Task<AppUser?> GetByIdAsync(Guid id)
+    {
+        return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<AppUser?> GetByUserNameAsync(string userName)
+    {
+        return await _collection.Find((x => x.Email == userName)).FirstOrDefaultAsync();
+    }
+
+    public async Task UpdateAsync(AppUser user)
+    {
+        await _collection.ReplaceOneAsync(x => x.Id == user.Id, user);
+    }
+}
