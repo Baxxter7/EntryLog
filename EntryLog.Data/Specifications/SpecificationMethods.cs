@@ -2,7 +2,7 @@
 
 namespace EntryLog.Data.Specifications;
 
-internal static class SpecificationMethods<TEntity> where TEntity : class
+public static class SpecificationMethods<TEntity> where TEntity : class
 {
     public static Expression<Func<TEntity, bool>> And(
         Expression<Func<TEntity, bool>> from,
