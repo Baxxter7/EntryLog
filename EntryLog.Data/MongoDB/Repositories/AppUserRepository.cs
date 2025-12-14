@@ -13,6 +13,11 @@ internal class AppUserRepository(IMongoDatabase database) : IAppUserRepository
         await _collection.InsertOneAsync(user);
     }
 
+    public async Task<AppUser?> GetByCodeAsync(int code)
+    {
+        return await _collection.Find(x => x.Code == code).FirstOrDefaultAsync();
+    }
+
     public async Task<AppUser?> GetByIdAsync(Guid id)
     {
         return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
