@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace EntryLog.Business.DTOs; 
+namespace EntryLog.Business.DTOs;
 
-public record WorkSessionParameters(
+public record CreateJobSessionDTO(
    string? SessionId,
    string UserId,
    string Method,
@@ -12,4 +12,4 @@ public record WorkSessionParameters(
    string IpAddress,
    IFormFile Image,
    string? Notes
-    );
+);
