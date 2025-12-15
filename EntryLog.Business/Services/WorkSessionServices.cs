@@ -1,6 +1,5 @@
 ﻿using EntryLog.Business.DTOs;
 using EntryLog.Business.Interfaces;
-using EntryLog.Business.Specs;
 using EntryLog.Data.Interfaces;
 using EntryLog.Entities.Enums;
 using EntryLog.Entities.POCOEntities;
@@ -36,33 +35,69 @@ public class WorkSessionServices : IWorkSessionServices
         if (user == null)
             return (false, "Usuario no encontrado");
 
-        WorkSessionSpec spec = new WorkSessionSpec();
-        spec.AndAlso(x => x.Status == SessionStatus.InProgress);
+        WorkSession? activeSession = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
-        IEnumerable<WorkSession> sessions = await _workSessionRepository.GetAllAsync(spec);
+        if (activeSession is null)
+            return (false, "No existe sesion activa para el usuario");
 
-        if (!sessions.Any()) {
-            return (false, "Ha ocurrido un error al cerrar la session");
-        }
+        activeSession.CheckOut ??= new Check();
+        activeSession.CheckOut.Method = sessionDTO.Method;
+        activeSession.CheckOut.DeviceName = sessionDTO.DeviceName;
+        activeSession.CheckOut.Date = DateTime.UtcNow;
+        activeSession.CheckOut.Location.Latitude = sessionDTO.Latitude;
+        activeSession.CheckOut.Location.Longitude = sessionDTO.Longitude;
+        activeSession.CheckOut.Location.IpAddress = sessionDTO.IpAddress;
+        activeSession.CheckOut.PhotoUrl = string.Empty;
+        activeSession.CheckOut.Notes = sessionDTO.Notes;
+        activeSession.Status = SessionStatus.Completed;
 
-        Guid id = Guid.Parse(sessionDTO.SessionId);
-        
-        WorkSession? session = await _workSessionRepository.GetByIdAsync(id);
-        session.CheckOut ??= new Check();
-        session.CheckOut.Method = sessionDTO.Method;
-        session.CheckOut.DeviceName = sessionDTO.DeviceName;
-        session.CheckOut.Date = DateTime.UtcNow;
-        session.CheckOut.Location.Latitude = sessionDTO.Latitude;
-        session.CheckOut.Location.Longitude = sessionDTO.Longitude;
-        session.CheckOut.Location.IpAddress = sessionDTO.IpAddress;
-        session.Status = SessionStatus.Completed;
-
-        await _workSessionRepository.UpdateAsync(session);
+        await _workSessionRepository.UpdateAsync(activeSession);
         return (true, "Se registro exitosamente la sesión");
     }
 
-    public Task<(bool success, string message)> OpenJobSession(CreateJobSessionDTO sessionDTO)
+    public async Task<(bool success, string message)> OpenJobSession(CreateJobSessionDTO sessionDTO)
     {
-        throw new NotImplementedException();
+
+        int code = int.Parse(sessionDTO.UserId);
+        Employee? employee = await _employeeRepository.GetByCodeAsync(code);
+
+        if (employee == null)
+            return (false, "Empleado no encontrado");
+
+        AppUser? user = await _appUserRepository.GetByCodeAsync(code);
+
+        if (user == null)
+            return (false, "Usuario no encontrado");
+
+        WorkSession session = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
+
+        if (session is not null)
+        {
+            return (false, "El empleado tiene una sesion activa");
+        }
+
+        session = new WorkSession
+        {
+            EmployeeId = user.Code,
+            CheckIn = new Check
+            {
+                Method = sessionDTO.Method,
+                DeviceName = sessionDTO.DeviceName,
+                Date = DateTime.UtcNow,
+                Location = new Location
+                {
+                    Latitude = sessionDTO.Latitude,
+                    Longitude = sessionDTO.Longitude,
+                    IpAddress = sessionDTO.IpAddress,
+                },
+                Notes = sessionDTO.Notes ?? null,
+                PhotoUrl = string.Empty
+            },
+            Status = SessionStatus.InProgress
+        };
+
+        await _workSessionRepository.CreateAsync(session);
+
+        return (true, "Session abierta exitosamente");
     }
 }
