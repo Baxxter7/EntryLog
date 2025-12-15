@@ -4,6 +4,6 @@ namespace EntryLog.Business.Interfaces;
 
 public interface IWorkSessionServices
 {
-    Task<(bool success, string message)> OpenJobSession(WorkSessionParameters parameters);
-    Task<(bool success, string message)> ClosedJobSession(WorkSessionParameters parameters);
+    Task<(bool success, string message)> OpenJobSession(CreateJobSessionDTO sessionDTO);
+    Task<(bool success, string message)> ClosedJobSession(CloseJobSessionDTO sessionDTO);
 }

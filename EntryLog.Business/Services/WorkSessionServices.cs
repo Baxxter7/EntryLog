@@ -23,9 +23,9 @@ public class WorkSessionServices : IWorkSessionServices
         _employeeRepository = employeeRepository;
     }
 
-    public async Task<(bool success, string message)> ClosedJobSession(WorkSessionParameters parameters)
+    public async Task<(bool success, string message)> ClosedJobSession(CloseJobSessionDTO sessionDTO)
     {
-        int code = int.Parse(parameters.UserId);
+        int code = int.Parse(sessionDTO.UserId);
         Employee? employee = await _employeeRepository.GetByCodeAsync(code);
 
         if (employee == null)
@@ -45,23 +45,23 @@ public class WorkSessionServices : IWorkSessionServices
             return (false, "Ha ocurrido un error al cerrar la session");
         }
 
-        Guid id = Guid.Parse(parameters.SessionId);
+        Guid id = Guid.Parse(sessionDTO.SessionId);
         
         WorkSession? session = await _workSessionRepository.GetByIdAsync(id);
         session.CheckOut ??= new Check();
-        session.CheckOut.Method = parameters.Method;
-        session.CheckOut.DeviceName = parameters.DeviceName;
+        session.CheckOut.Method = sessionDTO.Method;
+        session.CheckOut.DeviceName = sessionDTO.DeviceName;
         session.CheckOut.Date = DateTime.UtcNow;
-        session.CheckOut.Location.Latitude = parameters.Latitude;
-        session.CheckOut.Location.Longitude = parameters.Longitude;
-        session.CheckOut.Location.IpAddress = parameters.IpAddress;
+        session.CheckOut.Location.Latitude = sessionDTO.Latitude;
+        session.CheckOut.Location.Longitude = sessionDTO.Longitude;
+        session.CheckOut.Location.IpAddress = sessionDTO.IpAddress;
         session.Status = SessionStatus.Completed;
 
         await _workSessionRepository.UpdateAsync(session);
         return (true, "Se registro exitosamente la sesión");
     }
 
-    public Task<(bool success, string message)> OpenJobSession(WorkSessionParameters parameters)
+    public Task<(bool success, string message)> OpenJobSession(CreateJobSessionDTO sessionDTO)
     {
         throw new NotImplementedException();
     }
