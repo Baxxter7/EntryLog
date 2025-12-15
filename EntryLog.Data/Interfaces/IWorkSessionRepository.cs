@@ -10,5 +10,5 @@ public interface IWorkSessionRepository
     Task<WorkSession?> GetByIdAsync(Guid id);
     Task<WorkSession?> GetByEmpleadoAsync(int id);
     Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec);
-    Task<WorkSession> GetActiveSessionByEmployeeId(int id);
+    Task<WorkSession> GetActiveSessionByEmployeeIdAsync(int id);
 }
