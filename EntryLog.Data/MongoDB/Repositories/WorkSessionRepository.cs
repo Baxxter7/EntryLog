@@ -14,6 +14,11 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
         await _collection.InsertOneAsync(workSession);
     }
 
+    public Task<WorkSession> GetActiveSessionByEmployeeId(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec)
     {
         return await _collection.Find(spec.Expression).ToListAsync();
