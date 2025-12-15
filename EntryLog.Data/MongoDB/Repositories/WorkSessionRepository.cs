@@ -1,6 +1,7 @@
 ﻿using EntryLog.Data.Constants;
 using EntryLog.Data.Interfaces;
 using EntryLog.Data.Specifications;
+using EntryLog.Entities.Enums;
 using EntryLog.Entities.POCOEntities;
 using MongoDB.Driver;
 
@@ -14,9 +15,13 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
         await _collection.InsertOneAsync(workSession);
     }
 
-    public Task<WorkSession> GetActiveSessionByEmployeeId(int id)
+    public async Task<WorkSession> GetActiveSessionByEmployeeIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _collection
+            .Find(
+                x => x.EmployeeId == id
+                && x.Status == SessionStatus.InProgress
+            ).FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec)
@@ -26,7 +31,7 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
 
     public async Task<WorkSession?> GetByEmpleadoAsync(int id)
     {
-        return await _collection.Find(x => x.EmployeeId  == id).FirstOrDefaultAsync();
+        return await _collection.Find(x => x.EmployeeId == id).FirstOrDefaultAsync();
     }
 
     public async Task<WorkSession?> GetByIdAsync(Guid id)
@@ -36,6 +41,6 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
 
     public async Task UpdateAsync(WorkSession workSession)
     {
-        await _collection.ReplaceOneAsync(x => x.Id == workSession.Id,  workSession);
+        await _collection.ReplaceOneAsync(x => x.Id == workSession.Id, workSession);
     }
 }
