@@ -2,7 +2,7 @@
 
 namespace EntryLog.Business.DTOs; 
 
-public record CloseJobSessionDTO(
+public record CloseJobSessionDto(
    string? SessionId,
    string UserId,
    string Method,
