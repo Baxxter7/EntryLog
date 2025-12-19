@@ -7,5 +7,5 @@ public interface IWorkSessionServices
 {
     Task<(bool success, string message)> OpenJobSession(CreateJobSessionDto sessionDto);
     Task<(bool success, string message)> ClosedJobSession(CloseJobSessionDto sessionDto);
-    Task<IEnumerable<object>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter);
+    Task<IEnumerable<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter);
 }
