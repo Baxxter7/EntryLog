@@ -57,7 +57,7 @@ public class WorkSessionServices : IWorkSessionServices
         return (true, "Se registro exitosamente la sesión");
     }
 
-    public async Task<IEnumerable<object>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter)
+    public async Task<IEnumerable<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter)
     {
         var spec = new WorkSessionSpec();
 
@@ -66,8 +66,7 @@ public class WorkSessionServices : IWorkSessionServices
 
         IEnumerable<WorkSession> sessions = await _workSessionRepository.GetAllAsync(spec);
 
-        //Hola
-        throw new NotImplementedException();
+        return sessions.Select(MapToGetWorkSessionDto);
     }
 
     public async Task<(bool success, string message)> OpenJobSession(CreateJobSessionDto sessionDto)
@@ -114,5 +113,37 @@ public class WorkSessionServices : IWorkSessionServices
         await _workSessionRepository.CreateAsync(session);
 
         return (true, "Session abierta exitosamente");
+    }
+
+    private GetWorkSessionDto MapToGetWorkSessionDto(WorkSession session)
+    {
+        return new GetWorkSessionDto(
+            session.Id.ToString(),
+            session.EmployeeId,
+            new GetCheckDto(
+                session.CheckIn.Method,
+                session.CheckIn.DeviceName,
+                session.CheckIn.Date,
+                new GetLocationDto(
+                    session.CheckIn.Location.Latitude,
+                    session.CheckIn.Location.Longitude,
+                    session.CheckIn.Location.IpAddress
+                ),
+                session.CheckIn.PhotoUrl,
+                session.CheckIn.Notes),
+                session.CheckOut != null ? new GetCheckDto(
+                session.CheckOut.Method,
+                session.CheckOut.DeviceName,
+                session.CheckOut.Date,
+                new GetLocationDto(
+                    session.CheckOut.Location.Latitude,
+                    session.CheckOut.Location.Longitude,
+                    session.CheckOut.Location.IpAddress
+                ),
+                session.CheckOut.PhotoUrl,
+                session.CheckOut.Notes ) : null,
+                session.TotalWorked,
+                session.Status.ToString()
+            );
     }
 }
