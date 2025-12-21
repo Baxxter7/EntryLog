@@ -1,5 +1,6 @@
 ﻿using EntryLog.Business.DTOs;
 using EntryLog.Business.Interfaces;
+using EntryLog.Business.Mappers;
 using EntryLog.Business.QueryFilters;
 using EntryLog.Business.Specs;
 using EntryLog.Data.Interfaces;
@@ -61,7 +62,7 @@ public class WorkSessionServices : IWorkSessionServices
 
         IEnumerable<WorkSession> sessions = await _workSessionRepository.GetAllAsync(spec);
 
-        return sessions.Select(MapToGetWorkSessionDto);
+        return sessions.Select(WorkSessionMapper.MapToGetWorkSessionDto);
     }
 
     public async Task<(bool success, string message)> OpenJobSession(CreateJobSessionDto sessionDto)
@@ -102,38 +103,6 @@ public class WorkSessionServices : IWorkSessionServices
         await _workSessionRepository.CreateAsync(session);
 
         return (true, "Session abierta exitosamente");
-    }
-
-    private GetWorkSessionDto MapToGetWorkSessionDto(WorkSession session)
-    {
-        return new GetWorkSessionDto(
-            session.Id.ToString(),
-            session.EmployeeId,
-            new GetCheckDto(
-                session.CheckIn.Method,
-                session.CheckIn.DeviceName,
-                session.CheckIn.Date,
-                new GetLocationDto(
-                    session.CheckIn.Location.Latitude,
-                    session.CheckIn.Location.Longitude,
-                    session.CheckIn.Location.IpAddress
-                ),
-                session.CheckIn.PhotoUrl,
-                session.CheckIn.Notes),
-                session.CheckOut != null ? new GetCheckDto(
-                session.CheckOut.Method,
-                session.CheckOut.DeviceName,
-                session.CheckOut.Date,
-                new GetLocationDto(
-                    session.CheckOut.Location.Latitude,
-                    session.CheckOut.Location.Longitude,
-                    session.CheckOut.Location.IpAddress
-                ),
-                session.CheckOut.PhotoUrl,
-                session.CheckOut.Notes ) : null,
-                session.TotalWorked,
-                session.Status.ToString()
-            );
     }
 
     private async Task<(bool success, string message)> ValidateEmployeeUserAsync(int code)
