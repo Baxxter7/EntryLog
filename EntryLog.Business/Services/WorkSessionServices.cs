@@ -27,15 +27,10 @@ public class WorkSessionServices : IWorkSessionServices
     public async Task<(bool success, string message)> ClosedJobSession(CloseJobSessionDto sessionDto)
     {
         int code = int.Parse(sessionDto.UserId);
-        Employee? employee = await _employeeRepository.GetByCodeAsync(code);
+        var (sucess, message) = await ValidateEmployeeUserAsync(code);
 
-        if (employee == null)
-            return (false, "Empleado no encontrado");
-
-        AppUser? user = await _appUserRepository.GetByCodeAsync(code);
-
-        if (user == null)
-            return (false, "Usuario no encontrado");
+        if (!sucess)
+            return (sucess, message);
 
         WorkSession? activeSession = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
@@ -71,17 +66,11 @@ public class WorkSessionServices : IWorkSessionServices
 
     public async Task<(bool success, string message)> OpenJobSession(CreateJobSessionDto sessionDto)
     {
-
         int code = int.Parse(sessionDto.UserId);
-        Employee? employee = await _employeeRepository.GetByCodeAsync(code);
+        var (sucess, message) = await ValidateEmployeeUserAsync(code);
 
-        if (employee == null)
-            return (false, "Empleado no encontrado");
-
-        AppUser? user = await _appUserRepository.GetByCodeAsync(code);
-
-        if (user == null)
-            return (false, "Usuario no encontrado");
+        if(!sucess)
+            return(sucess, message);
 
         WorkSession session = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
@@ -92,7 +81,7 @@ public class WorkSessionServices : IWorkSessionServices
 
         session = new WorkSession
         {
-            EmployeeId = user.Code,
+            EmployeeId = code,
             CheckIn = new Check
             {
                 Method = sessionDto.Method,
@@ -146,4 +135,20 @@ public class WorkSessionServices : IWorkSessionServices
                 session.Status.ToString()
             );
     }
+
+    private async Task<(bool success, string message)> ValidateEmployeeUserAsync(int code)
+    {
+        Employee? employee = await _employeeRepository.GetByCodeAsync(code);
+
+        if (employee == null)
+            return (false, "Empleado no encontrado");
+
+        AppUser? user = await _appUserRepository.GetByCodeAsync(code);
+
+        if (user == null)
+            return (false, "Usuario no encontrado");
+
+        return (true, "");
+    }
+
 }
