@@ -65,7 +65,7 @@ internal class AppUserServices : IAppUserServices
 
         await _appUserRepository.CreateAsync(user);
 
-        return (true, "Employee created successfullys", new LoginResponseDto(user.Code, user.Role.ToString(), user.Email));
+        return (true, "Employee created successfully", new LoginResponseDto(user.Code, user.Role.ToString(), user.Email));
     }
 
     public async Task<(bool success, string message, LoginResponseDto? data)> UserLoginAsync(UserCredentialsDto credentialsDto)
