@@ -57,7 +57,6 @@ internal class AppUserServices : IAppUserServices
             Role = RoleType.Employee,
             Email = employeeDto.UserName,
             CellPhone = employeeDto.CellPhone,
-            //Password = employeeDto.Password,
             Password = _hasherService.Hash(employeeDto.Password),
             Attempts = 0,
             RecoveryTokenActive = false,
