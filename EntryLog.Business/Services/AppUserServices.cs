@@ -70,6 +70,18 @@ internal class AppUserServices : IAppUserServices
 
     public async Task<(bool success, string message, LoginResponseDto? data)> UserLoginAsync(UserCredentialsDto credentialsDto)
     {
-        throw new NotImplementedException();
+        AppUser user = await _appUserRepository.GetByUserNameAsync(credentialsDto.Username);
+        if (user is null)
+            return (false, "Incorrect username or password", null);
+
+        if(!user.Active)
+            return (false, "An error has occurred. Please contact the administrator", null);
+
+        bool accessGranted = _hasherService.Verify(credentialsDto.Password, user.Password);
+
+        if (!accessGranted)
+            return (false, "Incorrect username or password", null);
+
+        return (true, "Login successful", new LoginResponseDto(user.Code, user.Role.ToString(), user.Email));
     }
 }
