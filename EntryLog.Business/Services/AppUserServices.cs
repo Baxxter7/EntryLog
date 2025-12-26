@@ -65,10 +65,10 @@ internal class AppUserServices : IAppUserServices
 
         await _appUserRepository.CreateAsync(user);
 
-        return (true, "Login Successfull", new LoginResponseDto(user.Code, user.Role.ToString(), user.Email));
+        return (true, "Employee created successfullys", new LoginResponseDto(user.Code, user.Role.ToString(), user.Email));
     }
 
-    public Task<(bool success, string message, LoginResponseDto? data)> UserLoginAsync(UserCredentialsDto credentialsDto)
+    public async Task<(bool success, string message, LoginResponseDto? data)> UserLoginAsync(UserCredentialsDto credentialsDto)
     {
         throw new NotImplementedException();
     }
