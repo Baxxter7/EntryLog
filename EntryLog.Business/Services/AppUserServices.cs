@@ -12,17 +12,20 @@ internal class AppUserServices : IAppUserServices
     private readonly IAppUserRepository _appUserRepository;
     private readonly IPasswordHasherService _hasherService;
     private readonly IEncryptionService _encryptionService;
+    private readonly IEmailSenderService _emailSenderService;
 
     public AppUserServices(
         IEmployeeRepository employeeRepository,
         IAppUserRepository appUserRepository,
         IPasswordHasherService hasherService,
-        IEncryptionService encryptionService)
+        IEncryptionService encryptionService,
+        IEmailSenderService emailSenderService)
     {
         _employeeRepository = employeeRepository;
         _appUserRepository = appUserRepository;
         _hasherService = hasherService;
         _encryptionService = encryptionService;
+        _emailSenderService = emailSenderService;
     }
     public Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto)
     {
@@ -39,15 +42,18 @@ internal class AppUserServices : IAppUserServices
         if(!user.Active)
             return (false, "Account recovery was not successful.");
 
-        string recoveryTextPlain = $"{DateTime.UtcNow.Ticks}:{user.Email}";
+        string recoveryTokenPlain = $"{DateTime.UtcNow.Ticks}:{user.Email}";
 
-        string recoveryToken = _encryptionService.Encrypt(recoveryTextPlain);
+        string recoveryToken = _encryptionService.Encrypt(recoveryTokenPlain);
 
         user.RecoveryToken = recoveryToken;
         user.RecoveryTokenActive = true;
 
         await _appUserRepository.UpdateAsync(user);
 
+        bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email);
+
+        return (isSend, isSend ? $"email sent to account {user.Email}" : "An error occurred while sending the email");
     }
 
     public async Task<(bool success, string message, LoginResponseDto? data)> RegisterEmployeeAsync(CreateEmployeeUserDto employeeDto)
