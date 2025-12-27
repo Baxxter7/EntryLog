@@ -11,21 +11,43 @@ internal class AppUserServices : IAppUserServices
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IAppUserRepository _appUserRepository;
     private readonly IPasswordHasherService _hasherService;
+    private readonly IEncryptionService _encryptionService;
 
-    public AppUserServices(IEmployeeRepository employeeRepository, IAppUserRepository appUserRepository, IPasswordHasherService hasherService)
+    public AppUserServices(
+        IEmployeeRepository employeeRepository,
+        IAppUserRepository appUserRepository,
+        IPasswordHasherService hasherService,
+        IEncryptionService encryptionService)
     {
         _employeeRepository = employeeRepository;
         _appUserRepository = appUserRepository;
         _hasherService = hasherService;
+        _encryptionService = encryptionService;
     }
     public Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto)
     {
         throw new NotImplementedException();
     }
 
-    public Task<(bool success, string message)> AccountRecoveryStartAsync(string username)
+    public async Task<(bool success, string message)> AccountRecoveryStartAsync(string username)
     {
-        throw new NotImplementedException();
+        AppUser user = await _appUserRepository.GetByUserNameAsync(username);
+
+        if (user is null)
+            return (false, "Account recovery was not successful.");
+
+        if(!user.Active)
+            return (false, "Account recovery was not successful.");
+
+        string recoveryTextPlain = $"{DateTime.UtcNow.Ticks}:{user.Email}";
+
+        string recoveryToken = _encryptionService.Encrypt(recoveryTextPlain);
+
+        user.RecoveryToken = recoveryToken;
+        user.RecoveryTokenActive = true;
+
+        await _appUserRepository.UpdateAsync(user);
+
     }
 
     public async Task<(bool success, string message, LoginResponseDto? data)> RegisterEmployeeAsync(CreateEmployeeUserDto employeeDto)
