@@ -9,4 +9,5 @@ public interface IAppUserRepository
     Task<AppUser?> GetByUserNameAsync(string userName);
     Task<AppUser?> GetByIdAsync(Guid id);
     Task<AppUser?> GetByCodeAsync(int code);
+    Task<AppUser?> GetByRecoveryTokenAsync(string token);
 }

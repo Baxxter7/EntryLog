@@ -23,6 +23,12 @@ internal class AppUserRepository(IMongoDatabase database) : IAppUserRepository
         return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<AppUser?> GetByRecoveryTokenAsync(string token)
+    {
+        return await _collection.Find(x => x.RecoveryToken == token && x.RecoveryTokenActive)
+                                .FirstOrDefaultAsync();
+    }
+
     public async Task<AppUser?> GetByUserNameAsync(string userName)
     {
         return await _collection.Find((x => x.Email == userName)).FirstOrDefaultAsync();
