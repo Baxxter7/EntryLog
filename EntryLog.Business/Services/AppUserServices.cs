@@ -27,9 +27,61 @@ internal class AppUserServices : IAppUserServices
         _encryptionService = encryptionService;
         _emailSenderService = emailSenderService;
     }
-    public Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto)
+    public async Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(recoveryDto.Token))
+            return (false, "Invalid token");
+
+        string recoveryTokenPlain;
+
+        try
+        {
+            recoveryTokenPlain = _encryptionService.Decrypt(recoveryDto.Token);
+        }
+        catch (Exception ex)
+        {
+
+            return (false, "Invalid token");
+        }
+
+        if (string.IsNullOrEmpty(recoveryTokenPlain) || !recoveryTokenPlain.Contains(':'))
+            return (false, "Invalid token");
+
+        string[] parts = recoveryTokenPlain.Split(':');
+
+        if (parts.Length != 2 || !long.TryParse(parts[0], out long ticks))
+            return (false, "Invalid token");
+
+        string username = parts[1];
+
+        AppUser user = await _appUserRepository.GetByRecoveryTokenAsync(recoveryTokenPlain);
+
+        if (user is null || !string.Equals(username, user.Email, StringComparison.OrdinalIgnoreCase))
+            return (false, "Invalid token");
+
+        var tokenDate = DateTime.FromBinary(ticks);
+        var now = DateTime.UtcNow;
+
+        const int expirationMinutes = 30;
+
+        if ((now - tokenDate).TotalMinutes <= expirationMinutes)
+        {
+            user.Password = _hasherService.Hash(recoveryDto.Password);
+            await FinalizeRecovery(user);
+            return (true, "Password updated successfully");
+        }
+        else
+        {
+            await FinalizeRecovery(user);
+            return (false, "Invalid or expired token");
+        }
+    }
+
+    private async Task FinalizeRecovery(AppUser user)
+    {
+        user.RecoveryToken = null;
+        user.RecoveryTokenActive = false;
+        await _appUserRepository.UpdateAsync(user);
     }
 
     public async Task<(bool success, string message)> AccountRecoveryStartAsync(string username)
@@ -39,7 +91,7 @@ internal class AppUserServices : IAppUserServices
         if (user is null)
             return (false, "Account recovery was not successful.");
 
-        if(!user.Active)
+        if (!user.Active)
             return (false, "Account recovery was not successful.");
 
         string recoveryTokenPlain = $"{DateTime.UtcNow.Ticks}:{user.Email}";
@@ -58,7 +110,7 @@ internal class AppUserServices : IAppUserServices
 
     public async Task<(bool success, string message, LoginResponseDto? data)> RegisterEmployeeAsync(CreateEmployeeUserDto employeeDto)
     {
-        if(!int.TryParse(employeeDto.DocumentNumber, out int code))
+        if (!int.TryParse(employeeDto.DocumentNumber, out int code))
             return (false, "Número de documento inválido", null);
 
         Employee? employee = await _employeeRepository.GetByCodeAsync(code);
@@ -76,7 +128,7 @@ internal class AppUserServices : IAppUserServices
         if (user != null)
             return (false, "El usuario ya existe", null);
 
-       if(string.IsNullOrEmpty(employeeDto.Password) || employeeDto.Password != employeeDto.PasswordConf) 
+        if (string.IsNullOrEmpty(employeeDto.Password) || employeeDto.Password != employeeDto.PasswordConf)
             return (false, "El usuario ya existe", null);
 
         user = new AppUser
@@ -102,7 +154,7 @@ internal class AppUserServices : IAppUserServices
         if (user is null)
             return (false, "Incorrect username or password", null);
 
-        if(!user.Active)
+        if (!user.Active)
             return (false, "An error has occurred. Please contact the administrator", null);
 
         bool accessGranted = _hasherService.Verify(credentialsDto.Password, user.Password);
