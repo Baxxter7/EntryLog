@@ -6,6 +6,7 @@ internal class MailtrapApiOptions
     public string ApiToken{ get; init; } = string.Empty;
     public string FromEmail { get; init; } = string.Empty;
     public string FromName { get; init; } = string.Empty;
+    public List<MailTrapTemplete> templates { get; init; } = new List<MailTrapTemplete>();
 }
 
 internal class MailTrapTemplete
