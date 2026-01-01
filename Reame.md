@@ -25,7 +25,7 @@ El proyecto sigue un enfoque **Clean Architecture / Domain Driven Design (DDD)**
 * **Domain**: Entidades, Value Objects, Enums y reglas de negocio
 * **Application / Business**: DTOs, servicios y casos de uso
 * **Data**: Repositorios, DbContexts, Mongo Collections, Serializadores
-* **API**: Endpoints REST y configuración del host
+* **API**: Endpoints REST y configuración del host(Por definir)
 
 ---
 
