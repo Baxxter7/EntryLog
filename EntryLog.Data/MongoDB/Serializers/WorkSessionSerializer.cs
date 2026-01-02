@@ -20,6 +20,8 @@ internal static class WorkSessionSerializer
                 .SetIdGenerator(GuidGenerator.Instance)
                 .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
+                cm.SetIdMember(cm.GetMemberMap(x => x.Id));
+
                 cm.MapMember(x => x.EmployeeId).SetElementName("id_empleado");
                 cm.MapMember(x => x.CheckIn).SetElementName("entrada");
 
