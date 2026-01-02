@@ -20,8 +20,13 @@ namespace EntryLog.Data.MongoDB.Serializers
                     .SetIdGenerator(GuidGenerator.Instance)
                     .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
+                    cm.SetIdMember(cm.GetMemberMap(x => x.Id));
+
                     cm.MapMember(x => x.Code)
                     .SetElementName("codigo");
+
+                    cm.MapMember(x => x.Name)
+                    .SetElementName("nombre");
 
                     cm.MapMember(x => x.Role)
                     .SetElementName("rol")
