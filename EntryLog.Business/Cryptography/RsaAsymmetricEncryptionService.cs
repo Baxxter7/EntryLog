@@ -5,12 +5,12 @@ using System.Text;
 
 namespace EntryLog.Business.Cryptography;
 
-internal class RsaAsymmetricService : IEncryptionService
+internal class RsaAsymmetricEncryptionService : IEncryptionService
 {
     private readonly EncryptionKeyValues _keys;
     private readonly RSACryptoServiceProvider _csp = new RSACryptoServiceProvider((int)KeySize.SIZE_2048);
 
-    public RsaAsymmetricService(IOptions<EncryptionKeyValues> options)
+    public RsaAsymmetricEncryptionService(IOptions<EncryptionKeyValues> options)
     {
         _keys = options.Value;
     }
