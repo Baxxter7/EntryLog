@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="EntryLog.Api/EntryLog.Api.csproj" Id="b26660be-7252-49b8-aa4a-27e9074bbce0" />
   <Project Path="EntryLog.Business/EntryLog.Business.csproj" Id="63afd767-5d07-4119-951f-1bb76efa4346" />
   <Project Path="EntryLog.Data/EntryLog.Data.csproj" Id="7311aa8d-c121-4b37-b75e-a65ca563065f" />
   <Project Path="EntryLog.Entities/EntryLog.Entities.csproj" Id="feef0e4a-51be-4c27-bc45-6b205666fef0" />
