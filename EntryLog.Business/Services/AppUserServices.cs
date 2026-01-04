@@ -117,8 +117,7 @@ internal class AppUserServices : IAppUserServices
 
     public async Task<(bool success, string message, LoginResponseDto? data)> RegisterEmployeeAsync(CreateEmployeeUserDto employeeDto)
     {
-        if (!int.TryParse(employeeDto.DocumentNumber, out int code))
-            return (false, "Número de documento inválido", null);
+        int code = int.Parse(employeeDto.DocumentNumber);
 
         Employee? employee = await _employeeRepository.GetByCodeAsync(code);
 
@@ -154,7 +153,7 @@ internal class AppUserServices : IAppUserServices
         await _appUserRepository.CreateAsync(user);
 
         return (true, "Employee created successfully", new LoginResponseDto(user.Code, user.Role.ToString(), user.Email));
-    }
+      }
 
     public async Task<(bool success, string message, LoginResponseDto? data)> UserLoginAsync(UserCredentialsDto credentialsDto)
     {
