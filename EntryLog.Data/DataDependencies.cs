@@ -1,6 +1,7 @@
 ﻿using EntryLog.Data.Interfaces;
 using EntryLog.Data.MongoDB.Config;
 using EntryLog.Data.MongoDB.Repositories;
+using EntryLog.Data.MongoDB.Serializers;
 using EntryLog.Data.SqlLegacy.Contexts;
 using EntryLog.Data.SqlLegacy.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,11 @@ public static class IDataDependencies
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
         //Mongo 
+        AppUserSerializer.Init();
+        CheckSerializer.Init();
+        LocationSerializer.Init();
+        WorkSessionSerializer.Init();  
+
         services.Configure<EntryLogDbOptions>(configuration.GetSection(nameof(EntryLogDbOptions)));
 
         services.AddScoped<IMongoDatabase>(sp =>
