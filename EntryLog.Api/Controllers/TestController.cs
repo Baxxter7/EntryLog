@@ -15,9 +15,21 @@ public class TestController : ControllerBase
         _appUserServices = appUserServices;
     }
 
-    [HttpPost("register-employee")]
+    [HttpPost("user/register-employee")]
     public async Task<Object> CreateUserEmployeeAsync([FromBody] CreateEmployeeUserDto employeeUserDto)
     {
         return await _appUserServices.RegisterEmployeeAsync(employeeUserDto);
+    }
+
+    [HttpPost("user/login")]
+    public async Task<Object> UserLogin([FromBody] UserCredentialsDto userCredentialsDto)
+    {
+        (bool success, string message, LoginResponseDto? loginDto) = await _appUserServices.UserLoginAsync(userCredentialsDto);
+        return Ok(new
+        {
+            success,
+            message,
+            loginDto
+        });
     }
 }
