@@ -32,4 +32,16 @@ public class TestController : ControllerBase
             loginDto
         });
     }
+
+
+    [HttpPost("user/recovery-start")]
+    public async Task<Object> AccountRecoveryStartAsync([FromBody] string username)
+    {
+        (bool success, string message) = await _appUserServices.AccountRecoveryStartAsync(username);
+        return Ok(new
+        {
+            success,
+            message
+        });
+    }
 }
