@@ -55,7 +55,7 @@ internal class AppUserServices : IAppUserServices
 
         string username = parts[1];
 
-        AppUser user = await _appUserRepository.GetByRecoveryTokenAsync(recoveryTokenPlain);
+        AppUser user = await _appUserRepository.GetByRecoveryTokenAsync(recoveryDto.Token);
 
         if (user is null || !string.Equals(username, user.Email, StringComparison.OrdinalIgnoreCase))
             return (false, "Invalid token");
