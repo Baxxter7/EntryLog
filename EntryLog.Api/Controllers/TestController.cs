@@ -44,4 +44,15 @@ public class TestController : ControllerBase
             message
         });
     }
+
+    [HttpPost("user/recovery-complete")]
+    public async Task<Object> AccountRecoveryCompleteAsync([FromBody] AccountRecoveryDto recoveryDto)
+    {
+        (bool success, string message) = await _appUserServices.AccountRecoveryCompleteAsync(recoveryDto);
+        return Ok(new
+        {
+            success,
+            message
+        });
+    }
 }
