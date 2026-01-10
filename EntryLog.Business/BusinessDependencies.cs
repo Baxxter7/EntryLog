@@ -1,5 +1,6 @@
 ﻿using EntryLog.Business.Constants;
 using EntryLog.Business.Cryptography;
+using EntryLog.Business.ImageBB;
 using EntryLog.Business.Interfaces;
 using EntryLog.Business.Mailtrap;
 using EntryLog.Business.Mailtrap.Models;
@@ -25,14 +26,8 @@ public static class BusinessDependencies
         services.Configure<MailtrapApiOptions>(
             configuration.GetSection(nameof(MailtrapApiOptions)));
 
-        //HttpClient
-        //services.AddHttpClient(ApiNames.MailtrapIO, (sp, client) =>
-        //{
-        //    MailtrapApiOptions options = sp.GetRequiredService<IOptions<MailtrapApiOptions>>().Value;
-
-        //    client.BaseAddress = new Uri(options.ApiUrl);
-        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.ApiToken);
-        //});
+        services.Configure<ImageBBOptions>(
+            configuration.GetSection(nameof(ImageBBOptions)));
 
         services.AddHttpClient(ApiNames.MailtrapIO, (sp, client) =>
         {
@@ -42,10 +37,17 @@ public static class BusinessDependencies
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.ApiToken);
         });
 
+        services.AddHttpClient(ApiNames.ImageBB, (sp, client) =>
+        {
+            ImageBBOptions options = sp.GetRequiredService<IOptions<ImageBBOptions>>().Value;
+            client.BaseAddress = new Uri(options.ApiUrl);
+        });
+
         //Servicios de infraestructura
         services.AddScoped<IEmailSenderService, MailtrapApiService>();
         services.AddSingleton<IEncryptionService, RsaAsymmetricEncryptionService>();
         services.AddScoped<IPasswordHasherService, Argon2PasswordHasherService>();
+        services.AddScoped<ILoadImagesService, ImageBBService>();
 
         //Servicios de aplicacion
         services.AddScoped<IAppUserServices, AppUserServices>();
