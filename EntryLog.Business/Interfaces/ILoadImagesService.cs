@@ -4,5 +4,6 @@ namespace EntryLog.Business.Interfaces;
 
 internal interface ILoadImagesService
 {
-    Task<ImageBBResponseDto> UploadAsync(Stream image, string fileName, string extension);
+    //Task<ImageBBResponseDto> UploadAsync(Stream image, string fileName, string extension);
+    Task<ImageBBResponseDto?> UploadAsync(Stream image, string type, string fileName, string extension);
 }
