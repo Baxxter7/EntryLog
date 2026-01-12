@@ -9,10 +9,12 @@ namespace EntryLog.Api.Controllers;
 public class TestController : ControllerBase
 {
     private readonly IAppUserServices _appUserServices;
+    private readonly IWorkSessionServices _workSessionServices;
 
-    public TestController(IAppUserServices appUserServices)
+    public TestController(IAppUserServices appUserServices, IWorkSessionServices workSessionServices)
     {
         _appUserServices = appUserServices;
+        _workSessionServices = workSessionServices;
     }
 
     [HttpPost("user/register-employee")]
@@ -55,4 +57,21 @@ public class TestController : ControllerBase
             message
         });
     }
+
+    [HttpPost("user/upload-image")]
+    public async Task<Object> UploadImageTestAsync([FromForm] UploadImageRequest request)
+    {
+        (bool success, string message) = await _workSessionServices.ImageTestAsync(request.File);
+        return Ok(new
+        {
+            success,
+            message
+        });
+    }
+
+    public class UploadImageRequest
+    {
+        public IFormFile File { get; set; } = default!;
+    }
+
 }
