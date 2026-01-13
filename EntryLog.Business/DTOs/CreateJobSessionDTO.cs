@@ -3,7 +3,6 @@
 namespace EntryLog.Business.DTOs;
 
 public record CreateJobSessionDto(
-   string? SessionId,
    string UserId,
    string Method,
    string DeviceName,
