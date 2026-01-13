@@ -6,7 +6,6 @@ using EntryLog.Business.Specs;
 using EntryLog.Data.Interfaces;
 using EntryLog.Entities.Enums;
 using EntryLog.Entities.POCOEntities;
-using Microsoft.AspNetCore.Http;
 
 namespace EntryLog.Business.Services;
 
@@ -29,7 +28,7 @@ internal class WorkSessionServices : IWorkSessionServices
         _loadImageService = loadImagesService;
     }
 
-    public async Task<(bool success, string message)> ClosedJobSession(CloseJobSessionDto sessionDto)
+    public async Task<(bool success, string message)> ClosedJobSessionAsync(CloseJobSessionDto sessionDto)
     {
         int code = int.Parse(sessionDto.UserId);
         var (sucess, message) = await ValidateEmployeeUserAsync(code);
@@ -69,25 +68,13 @@ internal class WorkSessionServices : IWorkSessionServices
         return sessions.Select(WorkSessionMapper.MapToGetWorkSessionDto);
     }
 
-    //TODO: ELIMINAR DESPUES
-    public async Task<(bool success, string message)> ImageTestAsync(IFormFile image)
-    {
-        string filename = image.FileName;
-        string extension = Path.GetExtension(image.FileName);
-
-        ImageBBResponseDto imageBB = await _loadImageService
-            .UploadAsync(image.OpenReadStream(), image.ContentType, filename, extension);
-
-        return (imageBB.Success, imageBB.Data.Url);
-    }
-
-    public async Task<(bool success, string message)> OpenJobSession(CreateJobSessionDto sessionDto)
+    public async Task<(bool success, string message)> OpenJobSessionAsync(CreateJobSessionDto sessionDto)
     {
         int code = int.Parse(sessionDto.UserId);
         var (sucess, message) = await ValidateEmployeeUserAsync(code);
 
-        if(!sucess)
-            return(sucess, message);
+        if (!sucess)
+            return (sucess, message);
 
         WorkSession session = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
@@ -98,10 +85,8 @@ internal class WorkSessionServices : IWorkSessionServices
 
         string filename = sessionDto.Image.FileName;
         string extension = Path.GetExtension(sessionDto.Image.FileName);
-        //ImageBBResponseDto imageBB = await _loadImageService
-        //    .UploadAsync(sessionDto.Image.OpenReadStream(), filename, extension);
 
-        ImageBBResponseDto imageBB = await _loadImageService
+        ImageBBResponseDto? imageBB = await _loadImageService
             .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename, extension);
 
         session = new WorkSession
