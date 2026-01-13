@@ -1,6 +1,6 @@
 ﻿namespace EntryLog.Business.DTOs;
 
-public record   CreateEmployeeUserDto
+public record CreateEmployeeUserDto
 (
     string DocumentNumber,
     string UserName,

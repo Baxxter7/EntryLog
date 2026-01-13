@@ -3,6 +3,6 @@
 public record class AccountRecoveryDto
 (
     string Token,
-    string Password, 
+    string Password,
     string PasswordConf
 );

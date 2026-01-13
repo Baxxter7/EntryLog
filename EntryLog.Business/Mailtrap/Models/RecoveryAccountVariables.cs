@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace EntryLog.Business.Mailtrap.Models;
+
 internal class RecoveryAccountVariables
 {
     [JsonPropertyName("name")]

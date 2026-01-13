@@ -1,4 +1,5 @@
 ﻿namespace EntryLog.Business.Interfaces;
+
 internal interface IPasswordHasherService
 {
     string Hash(string password);

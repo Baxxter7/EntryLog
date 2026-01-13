@@ -7,5 +7,5 @@ public class Check
     public DateTime Date { get; set; }
     public Location Location { get; set; } = new();
     public string PhotoUrl { get; set; } = string.Empty;
-    public string? Notes { get; set; } 
+    public string? Notes { get; set; }
 }

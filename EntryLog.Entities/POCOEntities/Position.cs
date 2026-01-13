@@ -1,4 +1,4 @@
-﻿namespace EntryLog.Entities.POCOEntities; 
+﻿namespace EntryLog.Entities.POCOEntities;
 
 public sealed class Position
 {
@@ -6,5 +6,5 @@ public sealed class Position
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public ICollection<Employee> Employees { get; set; } = [];
-     
+
 }

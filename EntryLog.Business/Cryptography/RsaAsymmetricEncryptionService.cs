@@ -36,7 +36,8 @@ internal class RsaAsymmetricEncryptionService : IEncryptionService
 
     public string Decrypt(string cipherText)
     {
-        try {
+        try
+        {
             _csp.FromXmlString(_keys.PrivateKey);
             byte[] data = Convert.FromBase64String(cipherText);
             byte[] textPlain = _csp.Decrypt(data, true);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace EntryLog.Business.DTOs; 
+namespace EntryLog.Business.DTOs;
 
 public record CloseJobSessionDto(
    string? SessionId,

@@ -29,7 +29,7 @@ public static class IDataDependencies
         AppUserSerializer.Init();
         CheckSerializer.Init();
         LocationSerializer.Init();
-        WorkSessionSerializer.Init();  
+        WorkSessionSerializer.Init();
 
         services.Configure<EntryLogDbOptions>(configuration.GetSection(nameof(EntryLogDbOptions)));
 

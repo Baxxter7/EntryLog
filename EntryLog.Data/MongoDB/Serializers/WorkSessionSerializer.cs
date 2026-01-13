@@ -29,7 +29,7 @@ internal static class WorkSessionSerializer
                 .SetElementName("salida")
                 .SetIgnoreIfNull(true);
 
-                cm.MapMember(x => x.TotalWorked )
+                cm.MapMember(x => x.TotalWorked)
                     .SetElementName("total_trabajado")
                     .SetIgnoreIfNull(true);
 
