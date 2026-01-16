@@ -11,6 +11,6 @@ internal class UriService
         _httpContext = httpContext;
 
         var request = (_httpContext.HttpContext?.Request) ?? 
-            throw new Exception("Ha ocurrido un error al generar el contexto http de la aplicacion");
+            throw new InvalidOperationException("Ha ocurrido un error al generar el contexto http de la aplicacion");
     }
 }
