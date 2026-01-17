@@ -1,6 +1,7 @@
 ﻿using EntryLog.Business.Constants;
 using EntryLog.Business.Cryptography;
 using EntryLog.Business.ImageBB;
+using EntryLog.Business.Infrastructure;
 using EntryLog.Business.Interfaces;
 using EntryLog.Business.Mailtrap;
 using EntryLog.Business.Mailtrap.Models;
@@ -44,6 +45,9 @@ public static class BusinessDependencies
         });
 
         //Servicios de infraestructura
+        services.AddHttpContextAccessor();
+
+        services.AddScoped<IUriService, UriService>();
         services.AddScoped<IEmailSenderService, MailtrapApiService>();
         services.AddSingleton<IEncryptionService, RsaAsymmetricEncryptionService>();
         services.AddScoped<IPasswordHasherService, Argon2PasswordHasherService>();
