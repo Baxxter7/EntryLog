@@ -14,19 +14,22 @@ internal class AppUserServices : IAppUserServices
     private readonly IPasswordHasherService _hasherService;
     private readonly IEncryptionService _encryptionService;
     private readonly IEmailSenderService _emailSenderService;
+    private readonly IUriService _uriService;
 
     public AppUserServices(
         IEmployeeRepository employeeRepository,
         IAppUserRepository appUserRepository,
         IPasswordHasherService hasherService,
         IEncryptionService encryptionService,
-        IEmailSenderService emailSenderService)
+        IEmailSenderService emailSenderService,
+        IUriService uriService)
     {
         _employeeRepository = employeeRepository;
         _appUserRepository = appUserRepository;
         _hasherService = hasherService;
         _encryptionService = encryptionService;
         _emailSenderService = emailSenderService;
+        _uriService = uriService;
     }
     public async Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto)
     {
@@ -107,7 +110,7 @@ internal class AppUserServices : IAppUserServices
         var vars = new RecoveryAccountVariables
         {
             Name = user.Name,
-            Url = $"https://localhost:5000/account/recovery?token={recoveryToken}"
+            Url = $"{_uriService.ApplicationURL}/account/recovery?token={recoveryToken}"
         };
 
         bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email, vars);
