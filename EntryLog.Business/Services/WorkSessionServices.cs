@@ -15,17 +15,20 @@ internal class WorkSessionServices : IWorkSessionServices
     private readonly IAppUserRepository _appUserRepository;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly ILoadImagesService _loadImageService;
+    private readonly IUriService _uriService;
 
     public WorkSessionServices(
         IWorkSessionRepository workSessionRepository,
         IAppUserRepository appUserRepository,
         IEmployeeRepository employeeRepository,
-        ILoadImagesService loadImagesService)
+        ILoadImagesService loadImagesService,
+        IUriService uriService)
     {
         _workSessionRepository = workSessionRepository;
         _appUserRepository = appUserRepository;
         _employeeRepository = employeeRepository;
         _loadImageService = loadImagesService;
+        _uriService = uriService;
     }
 
     public async Task<(bool success, string message)> ClosedJobSessionAsync(CloseJobSessionDto sessionDto)
@@ -41,14 +44,20 @@ internal class WorkSessionServices : IWorkSessionServices
         if (activeSession is null)
             return (false, "No existe sesion activa para el usuario");
 
+        string filename = sessionDto.Image.FileName;
+        string extension = Path.GetExtension(sessionDto.Image.FileName);
+
+        ImageBBResponseDto? imageBB = await _loadImageService
+       .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename, extension);
+
         activeSession.CheckOut ??= new Check();
-        activeSession.CheckOut.Method = sessionDto.Method;
-        activeSession.CheckOut.DeviceName = sessionDto.DeviceName;
+        activeSession.CheckOut.Method = _uriService.UserAgent;
+        activeSession.CheckOut.DeviceName = _uriService.Platform;
         activeSession.CheckOut.Date = DateTime.UtcNow;
         activeSession.CheckOut.Location.Latitude = sessionDto.Latitude;
         activeSession.CheckOut.Location.Longitude = sessionDto.Longitude;
-        activeSession.CheckOut.Location.IpAddress = sessionDto.IpAddress;
-        activeSession.CheckOut.PhotoUrl = string.Empty;
+        activeSession.CheckOut.Location.IpAddress = _uriService.RemoteIpAddress;
+        activeSession.CheckOut.PhotoUrl = imageBB.Data.Url;
         activeSession.CheckOut.Notes = sessionDto.Notes;
         activeSession.Status = SessionStatus.Completed;
 
@@ -94,14 +103,14 @@ internal class WorkSessionServices : IWorkSessionServices
             EmployeeId = code,
             CheckIn = new Check
             {
-                Method = sessionDto.Method,
-                DeviceName = sessionDto.DeviceName,
+                Method = _uriService.UserAgent,
+                DeviceName = _uriService.Platform,
                 Date = DateTime.UtcNow,
                 Location = new Location
                 {
                     Latitude = sessionDto.Latitude,
                     Longitude = sessionDto.Longitude,
-                    IpAddress = sessionDto.IpAddress,
+                    IpAddress = _uriService.RemoteIpAddress,
                 },
                 Notes = sessionDto.Notes ?? null,
                 PhotoUrl = imageBB.Data.Url
