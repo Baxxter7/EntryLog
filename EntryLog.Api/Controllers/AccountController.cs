@@ -18,7 +18,13 @@ public class AccountController : ControllerBase
     [HttpPost("register-employee")]
     public async Task<Object> CreateUserEmployeeAsync([FromBody] CreateEmployeeUserDto employeeUserDto)
     {
-        return await _appUserServices.RegisterEmployeeAsync(employeeUserDto);
+        (bool success, string message, LoginResponseDto? loginDto) = await _appUserServices.RegisterEmployeeAsync(employeeUserDto);
+        return Ok(new
+        {
+            success,
+            message,
+            loginDto
+        });
     }
 
     [HttpPost("login")]
