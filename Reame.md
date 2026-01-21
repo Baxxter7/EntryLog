@@ -100,7 +100,7 @@ dotnet run
 El servicio quedará disponible en:
 
 ```
-https://localhost:5001
+https://localhost:7026;http://localhost:5110
 ```
 
 ---
