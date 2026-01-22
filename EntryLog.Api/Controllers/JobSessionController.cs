@@ -17,7 +17,7 @@ public class JobSessionController : ControllerBase
     }
 
     [HttpPost("open")]
-    public async Task<object> OpenJobSessionAsync([FromBody] CreateJobSessionDto jobSessionDto)
+    public async Task<object> OpenJobSessionAsync([FromForm] CreateJobSessionDto jobSessionDto)
     {
         (bool success, string message) = await _workSessionServices.OpenJobSessionAsync(jobSessionDto);
         return Ok(new
@@ -28,7 +28,7 @@ public class JobSessionController : ControllerBase
     }
 
     [HttpPost("close")]
-    public async Task<object> OpenJobSessionAsync([FromBody] CloseJobSessionDto jobSessionDto)
+    public async Task<object> CloseJobSessionAsync([FromForm] CloseJobSessionDto jobSessionDto)
     {
         (bool success, string message) = await _workSessionServices.ClosedJobSessionAsync(jobSessionDto);
         return Ok(new
