@@ -89,7 +89,7 @@ internal class WorkSessionServices : IWorkSessionServices
 
         if (session is not null)
         {
-            return (false, "El empleado tiene una sesion activa");
+            return (false, "The employee has an active session");
         }
 
         string filename = sessionDto.Image.FileName;
@@ -120,7 +120,7 @@ internal class WorkSessionServices : IWorkSessionServices
 
         await _workSessionRepository.CreateAsync(session);
 
-        return (true, "Session abierta exitosamente");
+        return (true, "Session opened successfully");
     }
 
     private async Task<(bool success, string message)> ValidateEmployeeUserAsync(int code)
