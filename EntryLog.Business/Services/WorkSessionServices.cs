@@ -42,7 +42,7 @@ internal class WorkSessionServices : IWorkSessionServices
         WorkSession? activeSession = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
         if (activeSession is null)
-            return (false, "No existe sesion activa para el usuario");
+            return (false, "There is no active session for the user");
 
         string filename = sessionDto.Image.FileName;
         string extension = Path.GetExtension(sessionDto.Image.FileName);
