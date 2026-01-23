@@ -1,8 +1,8 @@
 # 🕒 EntryLog – Sistema de Registro de Asistencia
 
-EntryLog es un sistema diseñado para el **registro, control y gestión de jornadas laborales** de empleados. Permite administrar **entradas, salidas, ubicaciones, métodos de marcaje y sesiones de trabajo**, soportando tanto persistencia relacional como NoSQL.
+EntryLog es un sistema diseñado para el **registro, control y gestión de jornadas laborales** de empleados. Permite administrar **entradas, salidas, ubicaciones, sesiones de trabajo**, soportando tanto persistencia relacional como NoSQL.
 
-El proyecto está construido con **ASP.NET Core (.NET 8)** y sigue una arquitectura limpia, orientada a dominio, preparada para escalar y adaptarse a diferentes motores de base de datos.
+El proyecto está construido con **ASP.NET Core (.NET 8)** y sigue una arquitectura en N-capas, orientada a dominio, preparada para escalar y adaptarse a diferentes motores de base de datos.
 
 ---
 
