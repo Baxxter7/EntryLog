@@ -62,7 +62,7 @@ internal class WorkSessionServices : IWorkSessionServices
         activeSession.Status = SessionStatus.Completed;
 
         await _workSessionRepository.UpdateAsync(activeSession);
-        return (true, "The session was successfully registered");
+        return (true, "Session closed successfully");
     }
 
     public async Task<IEnumerable<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter)
