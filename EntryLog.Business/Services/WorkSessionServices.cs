@@ -128,7 +128,7 @@ internal class WorkSessionServices : IWorkSessionServices
         Employee? employee = await _employeeRepository.GetByCodeAsync(code);
 
         if (employee == null)
-            return (false, "Empleado no encontrado");
+            return (false, "Employee not found");
 
         AppUser? user = await _appUserRepository.GetByCodeAsync(code);
 
