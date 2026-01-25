@@ -133,7 +133,7 @@ internal class WorkSessionServices : IWorkSessionServices
         AppUser? user = await _appUserRepository.GetByCodeAsync(code);
 
         if (user == null)
-            return (false, "Usuario no encontrado");
+            return (false, "User not found");
 
         return (true, "");
     }
