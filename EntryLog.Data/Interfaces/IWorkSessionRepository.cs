@@ -9,6 +9,7 @@ public interface IWorkSessionRepository
     Task UpdateAsync(WorkSession workSession);
     Task<WorkSession?> GetByIdAsync(Guid id);
     Task<WorkSession?> GetByEmpleadoAsync(int id);
-    Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec);
+    Task<IEnumerable<WorkSession>> GetAllAsync(ISpecification<WorkSession> spec);
+    Task<int> CountAsync(Specification<WorkSession> spec);
     Task<WorkSession> GetActiveSessionByEmployeeIdAsync(int id);
 }
