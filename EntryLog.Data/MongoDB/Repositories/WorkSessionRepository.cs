@@ -10,6 +10,12 @@ namespace EntryLog.Data.MongoDB.Repositories;
 internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepository
 {
     private readonly IMongoCollection<WorkSession> _collection = database.GetCollection<WorkSession>(CollectionNames.WorkSessions);
+
+    public Task<int> CountAsync(Specification<WorkSession> spec)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task CreateAsync(WorkSession workSession)
     {
         await _collection.InsertOneAsync(workSession);
@@ -27,6 +33,11 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
     public async Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec)
     {
         return await _collection.Find(spec.Expression).ToListAsync();
+    }
+
+    public Task<IEnumerable<WorkSession>> GetAllAsync(ISpecification<WorkSession> spec)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<WorkSession?> GetByEmpleadoAsync(int id)
