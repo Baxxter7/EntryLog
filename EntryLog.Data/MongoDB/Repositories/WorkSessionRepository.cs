@@ -11,9 +11,9 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
 {
     private readonly IMongoCollection<WorkSession> _collection = database.GetCollection<WorkSession>(CollectionNames.WorkSessions);
 
-    public Task<int> CountAsync(Specification<WorkSession> spec)
+    public async Task<int> CountAsync(Specification<WorkSession> spec)
     {
-        throw new NotImplementedException();
+        return await BaseRepository<WorkSession>.CountAsync(_collection.AsQueryable(), spec);
     }
 
     public async Task CreateAsync(WorkSession workSession)
@@ -32,7 +32,7 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
 
     public async Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec)
     {
-        return await _collection.Find(spec.Expression).ToListAsync();
+        return await BaseRepository<WorkSession>.GetAllBySpecificationAsync(_collection.AsQueryable(), spec);
     }
 
     public Task<IEnumerable<WorkSession>> GetAllAsync(ISpecification<WorkSession> spec)
