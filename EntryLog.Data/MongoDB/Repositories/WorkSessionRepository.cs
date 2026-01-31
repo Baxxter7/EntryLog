@@ -30,14 +30,9 @@ internal class WorkSessionRepository(IMongoDatabase database) : IWorkSessionRepo
             ).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<WorkSession>> GetAllAsync(Specification<WorkSession> spec)
+    public async Task<IEnumerable<WorkSession>> GetAllAsync(ISpecification<WorkSession> spec)
     {
         return await BaseRepository<WorkSession>.GetAllBySpecificationAsync(_collection.AsQueryable(), spec);
-    }
-
-    public Task<IEnumerable<WorkSession>> GetAllAsync(ISpecification<WorkSession> spec)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<WorkSession?> GetByEmpleadoAsync(int id)
