@@ -1,6 +1,8 @@
 ﻿using EntryLog.Business.DTOs;
+using EntryLog.Business.Enums;
 using EntryLog.Business.Interfaces;
 using EntryLog.Business.Mappers;
+using EntryLog.Business.Pagination;
 using EntryLog.Business.QueryFilters;
 using EntryLog.Business.Specs;
 using EntryLog.Data.Interfaces;
@@ -65,16 +67,44 @@ internal class WorkSessionServices : IWorkSessionServices
         return (true, "Session closed successfully");
     }
 
-    public async Task<IEnumerable<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter)
+    public async Task<PaginatedResult<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter)
     {
         var spec = new WorkSessionSpec();
 
         if (filter.EmployeeId.HasValue)
             spec.AndAlso(x => x.EmployeeId == filter.EmployeeId.Value);
 
+        //Contar los registros que coinciden con ese filtro
+        int count = await _workSessionRepository.CountAsync(spec);
+
+        //Aplicar la paginación
+        filter.PageIndex ??= 1;
+        filter.PageSize = 10;
+        filter.PageSize = Math.Min(filter.PageSize.Value, 50);
+
+        spec.ApplyPaging(filter.PageSize.Value, filter.PageSize.Value * (filter.PageIndex.Value - 1));
+
+        //Aplicar ordenamiento
+        switch (filter.Sort)
+        {
+            case SortType.Ascending:
+                spec.AndOrderBy(x => x.CheckIn.Date);
+                break;
+            case SortType.Descending:
+                spec.AndOrderByDescending(x => x.CheckIn.Date);
+                break;
+            default:
+                spec.AndOrderByDescending(x => x.CheckIn.Date);
+                break;
+
+        }
+
+        //Paginacion en base de datos
         IEnumerable<WorkSession> sessions = await _workSessionRepository.GetAllAsync(spec);
 
-        return sessions.Select(WorkSessionMapper.MapToGetWorkSessionDto);
+        IEnumerable<GetWorkSessionDto> results = sessions.Select(WorkSessionMapper.MapToGetWorkSessionDto);
+
+        return PaginatedResult<GetWorkSessionDto>.Create(results, filter, count);
     }
 
     public async Task<(bool success, string message)> OpenJobSessionAsync(CreateJobSessionDto sessionDto)
