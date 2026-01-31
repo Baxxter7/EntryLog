@@ -1,5 +1,6 @@
 ﻿using EntryLog.Business.DTOs;
 using EntryLog.Business.Interfaces;
+using EntryLog.Business.Pagination;
 using EntryLog.Business.QueryFilters;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,6 +40,6 @@ public class JobSessionController : ControllerBase
     }
 
     [HttpPost("filter")]
-    public async Task<IEnumerable<GetWorkSessionDto>> FilterAsync([FromQuery] WorkSessionQueryFilter filter)
+    public async Task<PaginatedResult<GetWorkSessionDto>> FilterAsync([FromQuery] WorkSessionQueryFilter filter)
         => await _workSessionServices.GetSessionListByFilterAsync(filter);
 }
