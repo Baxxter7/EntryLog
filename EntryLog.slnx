@@ -3,4 +3,5 @@
   <Project Path="EntryLog.Business/EntryLog.Business.csproj" Id="63afd767-5d07-4119-951f-1bb76efa4346" />
   <Project Path="EntryLog.Data/EntryLog.Data.csproj" Id="7311aa8d-c121-4b37-b75e-a65ca563065f" />
   <Project Path="EntryLog.Entities/EntryLog.Entities.csproj" Id="feef0e4a-51be-4c27-bc45-6b205666fef0" />
+  <Project Path="EntryLog.Web/EntryLog.Web.csproj" Id="6f5f53f7-3335-4911-8346-665bd7692a40" />
 </Solution>
