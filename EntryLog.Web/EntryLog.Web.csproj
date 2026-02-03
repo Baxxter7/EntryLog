@@ -11,4 +11,8 @@
     <Folder Include="wwwroot\lib\kaiadmin\assets\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EntryLog.Business\EntryLog.Business.csproj" />
+  </ItemGroup>
+
 </Project>
