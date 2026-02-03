@@ -1,12 +1,47 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EntryLog.Business.DTOs;
+using EntryLog.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EntryLog.Web.Controllers
 {
     public class AccountController : Controller
     {
-        public IActionResult Index()
+        private readonly IAppUserServices _appUserServices;
+
+        public AccountController(IAppUserServices appUserServices)
+        {
+            _appUserServices = appUserServices;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult RegisterEmployeeUser()
         {
             return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<JsonResult> RegisterEmployeeAsync(CreateEmployeeUserDto model)
+        {
+            (bool success, string message, LoginResponseDto data) = await _appUserServices.RegisterEmployeeAsync(model);
+            //Loguear al empleado
+
+            if (!success)
+            {
+                return Json(new
+                {
+                    success,
+                    message
+                });
+            }
+
+            return Json(new
+            {
+                success,
+                path = "/main"
+            });
         }
     }
 }
