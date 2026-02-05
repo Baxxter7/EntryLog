@@ -1,7 +1,14 @@
+using EntryLog.Business;
+using EntryLog.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services
+    .AddDataServices(builder.Configuration)
+    .AddBusinessServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -22,6 +29,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Main}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=RegisterEmployeeUser}/{id?}");
 
 app.Run();
