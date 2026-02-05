@@ -23,7 +23,8 @@ namespace EntryLog.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<JsonResult> RegisterEmployeeAsync(CreateEmployeeUserDto model)
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> RegisterEmployeeUserAsync(CreateEmployeeUserDto model)
         {
             (bool success, string message, LoginResponseDto data) = await _appUserServices.RegisterEmployeeAsync(model);
             //Loguear al empleado

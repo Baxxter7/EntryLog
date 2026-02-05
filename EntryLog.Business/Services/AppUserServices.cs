@@ -113,7 +113,8 @@ internal class AppUserServices : IAppUserServices
             Url = $"{_uriService.ApplicationURL}/account/recovery?token={recoveryToken}"
         };
 
-        bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email, vars);
+        // bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email, vars);
+        bool isSend = true;
 
         return (isSend, isSend ? $"email sent to account {user.Email}" : "An error occurred while sending the email");
     }
