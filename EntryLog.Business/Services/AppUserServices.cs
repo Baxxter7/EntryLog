@@ -131,7 +131,7 @@ internal class AppUserServices : IAppUserServices
         AppUser? user = await _appUserRepository.GetByCodeAsync(code);
 
         if (user != null)
-            return (false, "El empleado ya tiene un usuario registrado", null);
+            return (false, "The employee already has a registered user account", null);
 
         user = await _appUserRepository.GetByUserNameAsync(employeeDto.UserName);
 
