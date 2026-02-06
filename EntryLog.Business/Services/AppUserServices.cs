@@ -126,7 +126,7 @@ internal class AppUserServices : IAppUserServices
         Employee? employee = await _employeeRepository.GetByCodeAsync(code);
 
         if (employee == null)
-            return (false, "Empleado no encontrado", null);
+            return (false, "Employee not found", null);
 
         AppUser? user = await _appUserRepository.GetByCodeAsync(code);
 
