@@ -136,10 +136,10 @@ internal class AppUserServices : IAppUserServices
         user = await _appUserRepository.GetByUserNameAsync(employeeDto.UserName);
 
         if (user != null)
-            return (false, "El usuario ya existe", null);
+            return (false, "The user already exists", null);
 
         if (string.IsNullOrEmpty(employeeDto.Password) || employeeDto.Password != employeeDto.PasswordConf)
-            return (false, "El usuario ya existe", null);
+            return (false, "The user already exists", null);
 
         user = new AppUser
         {
