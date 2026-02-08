@@ -1,9 +1,18 @@
 using EntryLog.Business;
 using EntryLog.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.LoginPath = "/account/login";
+        options.ReturnUrlParameter = "returnUrl";
+    });
+
+builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
 
 builder.Services
@@ -23,8 +32,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
