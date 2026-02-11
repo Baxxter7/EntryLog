@@ -13,6 +13,7 @@ public static class HttpContextExtensions
             new Claim(ClaimTypes.NameIdentifier, userData.DocumentNumber.ToString()),
             new Claim(ClaimTypes.Role, userData.Role),
             new Claim(ClaimTypes.Email, userData.Email),
+            new Claim(ClaimTypes.Name, userData.Name),
         ];
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
