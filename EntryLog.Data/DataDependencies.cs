@@ -30,6 +30,7 @@ public static class IDataDependencies
         CheckSerializer.Init();
         LocationSerializer.Init();
         WorkSessionSerializer.Init();
+        FaceIdSerializer.Init();
 
         services.Configure<EntryLogDbOptions>(configuration.GetSection(nameof(EntryLogDbOptions)));
 
