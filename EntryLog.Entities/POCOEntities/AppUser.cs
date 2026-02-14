@@ -14,5 +14,6 @@ public class AppUser
     public int Attempts { get; set; }
     public string? RecoveryToken { get; set; } = string.Empty;
     public bool RecoveryTokenActive { get; set; }
+    public FaceID? FaceID { get; set; }
     public bool Active { get; set; }
 }
