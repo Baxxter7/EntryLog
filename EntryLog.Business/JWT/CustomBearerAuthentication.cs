@@ -36,8 +36,33 @@ internal class CustomBearerAuthentication : IJwtService
         return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
     }
 
-    public IDictionary<string, string> ValidateToken(string token)
+    public IDictionary<string, string>? ValidateToken(string token)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                LifetimeValidator = JwtValidator.CustomLifeTimeValidator,
+                ClockSkew = TimeSpan.Zero,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.Secret)),
+                ValidateIssuerSigningKey = true
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+            var claimsDictionary = new Dictionary<string, string>();
+
+            foreach( var claim in principal.Claims)
+                claimsDictionary[claim.Type] = claim.Value;
+
+            return claimsDictionary;
+        }
+        catch
+        {
+            return null;
+        }
+        
     }
 }
