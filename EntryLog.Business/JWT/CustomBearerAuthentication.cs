@@ -54,7 +54,7 @@ internal class CustomBearerAuthentication : IJwtService
             var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
             var claimsDictionary = new Dictionary<string, string>();
 
-            foreach (var claim in principal.Claims)
+            foreach( var claim in principal.Claims)
                 claimsDictionary[claim.Type] = claim.Value;
 
             return claimsDictionary;
@@ -63,6 +63,6 @@ internal class CustomBearerAuthentication : IJwtService
         {
             return null;
         }
-
+        
     }
 }
