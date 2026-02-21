@@ -10,7 +10,7 @@ internal class FaceIdService : IFaceIdService
 {
     private readonly IAppUserRepository _userRepository;
     private readonly IEmployeeRepository _employeeRepository;
-    private readonly ILoadImagesService _loadImagesService;
+    private readonly ILoadImagesService _imageService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IJwtService _jwtService;
 
@@ -18,13 +18,13 @@ internal class FaceIdService : IFaceIdService
 
     public FaceIdService(IAppUserRepository userRepository, 
         IEmployeeRepository employeeRepository, 
-        ILoadImagesService loadImagesService,
+        ILoadImagesService imageService,
         IHttpClientFactory httpClientFactory, 
         IJwtService jwtService)
     {
         _userRepository = userRepository;
         _employeeRepository = employeeRepository;
-        _loadImagesService = loadImagesService;
+        _imageService = imageService;
         _httpClientFactory = httpClientFactory;
         _jwtService = jwtService;
     }
@@ -58,13 +58,27 @@ internal class FaceIdService : IFaceIdService
         Employee employee = await employeeTask;
 
         if (employee is null)
-            return (false,"ha ocurrido un problema al obtener el employee", null);
+            return (false,"An error while fetching the employee", null);
 
         if(user is null)
-            return (false,"ha ocurrido un problema al obtener el user", null);
+            return (false,"An error while fetching the user", null);
 
         if (user.FaceID is not null && user.FaceID.Active)
-            return (false, "FaceID ya configurado", null);
+            return (false, "FaceID is already set up", null);
+
+        var ext = Path.GetExtension(faceIdDto.image.FileName);
+        if (string.IsNullOrEmpty(ext))
+            ext = ".png";
+        
+        string fileName = $"faceId-{user.Id}{ext}";
+
+        try {
+            var imageUrl = await _imageService.UploadAsync(faceIdDto.image.OpenReadStream(), faceIdDto.image.ContentType, fileName);
+        }
+        catch
+        {
+
+        }
 
     }
 
