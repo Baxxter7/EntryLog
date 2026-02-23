@@ -17,11 +17,11 @@ internal class ImageBBService : ILoadImagesService
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<ImageBBResponseDto?> UploadAsync(
+    public async Task<string?> UploadAsync(
     Stream image,
     string contentType,
-    string fileName,
-    string extension)
+    string fileName
+    )
     {
         using HttpClient client = _httpClientFactory.CreateClient(ApiNames.ImageBB);
 
@@ -37,7 +37,9 @@ internal class ImageBBService : ILoadImagesService
 
         string responseBody = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<ImageBBResponseDto>(responseBody);
+        ImageBBResponseDto imageBBResponse = JsonSerializer.Deserialize<ImageBBResponseDto>(responseBody);
+
+        return imageBBResponse.Data.Url;
     }
 
     private MultipartFormDataContent CreateMultipartContent(
