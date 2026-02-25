@@ -47,10 +47,9 @@ internal class WorkSessionServices : IWorkSessionServices
             return (false, "There is no active session for the user");
 
         string filename = sessionDto.Image.FileName;
-        string extension = Path.GetExtension(sessionDto.Image.FileName);
 
-        ImageBBResponseDto? imageBB = await _loadImageService
-       .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename, extension);
+        string? imageBBUrl = await _loadImageService
+       .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename);
 
         activeSession.CheckOut ??= new Check();
         activeSession.CheckOut.Method = _uriService.UserAgent;
@@ -59,7 +58,7 @@ internal class WorkSessionServices : IWorkSessionServices
         activeSession.CheckOut.Location.Latitude = sessionDto.Latitude;
         activeSession.CheckOut.Location.Longitude = sessionDto.Longitude;
         activeSession.CheckOut.Location.IpAddress = _uriService.RemoteIpAddress;
-        activeSession.CheckOut.PhotoUrl = imageBB.Data.Url;
+        activeSession.CheckOut.PhotoUrl = imageBBUrl;
         activeSession.CheckOut.Notes = sessionDto.Notes;
         activeSession.Status = SessionStatus.Completed;
 
@@ -125,8 +124,8 @@ internal class WorkSessionServices : IWorkSessionServices
         string filename = sessionDto.Image.FileName;
         string extension = Path.GetExtension(sessionDto.Image.FileName);
 
-        ImageBBResponseDto? imageBB = await _loadImageService
-            .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename, extension);
+        string? imageBBUrl = await _loadImageService
+            .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename);
 
         session = new WorkSession
         {
@@ -143,7 +142,7 @@ internal class WorkSessionServices : IWorkSessionServices
                     IpAddress = _uriService.RemoteIpAddress,
                 },
                 Notes = sessionDto.Notes ?? null,
-                PhotoUrl = imageBB.Data.Url
+                PhotoUrl = imageBBUrl
             },
             Status = SessionStatus.InProgress
         };
