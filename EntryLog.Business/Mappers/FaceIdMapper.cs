@@ -13,4 +13,6 @@ internal class FaceIdMapper
             .ToString("dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
         faceId.Active
        );
+
+    public static EmployeeFaceIdDto Empty() => new("", "", false);
 }
