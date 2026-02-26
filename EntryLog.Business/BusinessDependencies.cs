@@ -3,6 +3,7 @@ using EntryLog.Business.Cryptography;
 using EntryLog.Business.ImageBB;
 using EntryLog.Business.Infrastructure;
 using EntryLog.Business.Interfaces;
+using EntryLog.Business.JWT;
 using EntryLog.Business.Mailtrap;
 using EntryLog.Business.Mailtrap.Models;
 using EntryLog.Business.Services;
@@ -30,6 +31,11 @@ public static class BusinessDependencies
         services.Configure<ImageBBOptions>(
             configuration.GetSection(nameof(ImageBBOptions)));
 
+        services.Configure<JwtConfiguration>(
+            configuration.GetSection(nameof(JwtConfiguration)));
+
+        services.AddHttpClient();
+
         services.AddHttpClient(ApiNames.MailtrapIO, (sp, client) =>
         {
             MailtrapApiOptions options = sp.GetRequiredService<IOptions<MailtrapApiOptions>>().Value;
@@ -52,10 +58,12 @@ public static class BusinessDependencies
         services.AddSingleton<IEncryptionService, RsaAsymmetricEncryptionService>();
         services.AddScoped<IPasswordHasherService, Argon2PasswordHasherService>();
         services.AddScoped<ILoadImagesService, ImageBBService>();
+        services.AddScoped<IJwtService, CustomBearerAuthentication>();
 
         //Servicios de aplicacion
         services.AddScoped<IAppUserServices, AppUserServices>();
         services.AddScoped<IWorkSessionServices, WorkSessionServices>();
+        services.AddScoped<IFaceIdService, FaceIdService>();
 
         return services;
     }
