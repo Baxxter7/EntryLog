@@ -3,6 +3,7 @@ using EntryLog.Business.Interfaces;
 using EntryLog.Business.Mappers;
 using EntryLog.Data.Interfaces;
 using EntryLog.Entities.POCOEntities;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
 
 namespace EntryLog.Business.Services;
@@ -32,7 +33,7 @@ internal class FaceIdService : IFaceIdService
 
     public async Task<(bool success, string message, EmployeeFaceIdDto? data)> CreateEmployeeFaceIdAsync(AddEmployeeFaceIdDto faceIdDto)
     {
-        if(faceIdDto.EmployeeCode <= 0)
+        if (faceIdDto.EmployeeCode <= 0)
             return (false, "EmployeeCode is required", null);
 
         if (faceIdDto.image is null || faceIdDto.image.Length == 0)
@@ -52,7 +53,7 @@ internal class FaceIdService : IFaceIdService
         }
 
         if (descriptor is null || descriptor.Count != DescriptorLength)
-            return (false, "Descriptor lenght non validad", null);
+            return (false, "Descriptor lenght no valid", null);
 
         var userTask = _userRepository.GetByCodeAsync(faceIdDto.EmployeeCode);
         var employeeTask = _employeeRepository.GetByCodeAsync(faceIdDto.EmployeeCode);
@@ -117,9 +118,10 @@ internal class FaceIdService : IFaceIdService
         using var client = _httpClientFactory.CreateClient();
         using var response = await client.GetAsync(imageUrl, HttpCompletionOption.ResponseHeadersRead);
 
-        if(!response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
             return string.Empty;
 
+        //"application/octet-stream"
         var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet/stream";
 
         byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
@@ -128,17 +130,37 @@ internal class FaceIdService : IFaceIdService
     }
 
     public async Task<string> GenerateReferenceImageTokenAsync(string userId)
+    => await _jwtService.GenerateTokenAsync(userId, "faceid_reference", TimeSpan.FromSeconds(30));
+
+    public async Task<EmployeeFaceIdDto> GetFaceIdAsync(int employeeCode)
     {
-        throw new NotImplementedException();
+        AppUser user = await _userRepository.GetByCodeAsync(employeeCode);
+        if (user is null)
+            return FaceIdMapper.Empty();
+
+        FaceID? faceId = user.FaceID;
+        string base64Image = faceId != null ? await GenerateBase64PngImageAsync(faceId!.ImageUrl) : string.Empty;
+        EmployeeFaceIdDto faceIdDto = faceId is not null
+            ? FaceIdMapper.MapToEmployeeFaceIdDto(faceId, base64Image) : FaceIdMapper.Empty();
+
+        return faceIdDto;
     }
 
-    public Task<EmployeeFaceIdDto> GetFaceIdAsync(int employeeCode)
+    public async Task<string> GetReferenceImageAsync(string authHeader)
     {
-        throw new NotImplementedException();
-    }
+        if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            return string.Empty;
 
-    public Task<string> GetReferenceImageAsync(string authHeader)
-    {
-        throw new NotImplementedException();
+        var token = authHeader.Substring("Bearer ".Length).Trim();
+        var claims = _jwtService.ValidateToken(token);
+
+        if (claims is null || !claims.TryGetValue("purpose", out var purpose) || purpose?.ToString() != "faceid_reference")
+            return string.Empty;
+
+        if (!claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var nameId) || !int.TryParse(nameId?.ToString(), out var code))
+            return string.Empty;
+
+        var faceIdDto = await GetFaceIdAsync(code);
+        return faceIdDto?.Base64Image ?? string.Empty;
     }
 }
