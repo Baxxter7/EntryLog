@@ -49,11 +49,11 @@ internal class FaceIdService : IFaceIdService
         }
         catch (JsonException ex)
         {
-            return (false, $"Descriptor format error: {ex.Message}", null);
+            return (false, $"Invalid descriptor format", null);
         }
 
         if (descriptor is null || descriptor.Count != DescriptorLength)
-            return (false, "Descriptor lenght no valid", null);
+            return (false, "Descriptor length no valid", null);
 
         var userTask = _userRepository.GetByCodeAsync(faceIdDto.EmployeeCode);
         var employeeTask = _employeeRepository.GetByCodeAsync(faceIdDto.EmployeeCode);
@@ -84,11 +84,11 @@ internal class FaceIdService : IFaceIdService
         }
         catch
         {
-            return (false, "No se ha podido cargar la imagen", null);
+            return (false, "Unable to upload image", null);
         }
 
         if (string.IsNullOrEmpty(imageUrl))
-            return (false, "No se ha podido cargar la imagen", null);
+            return (false, "Unable to upload image", null);
 
         string base64Image;
         try
@@ -97,7 +97,7 @@ internal class FaceIdService : IFaceIdService
         }
         catch (Exception ex)
         {
-            return (false, $"No se ha podido generar el base 64, {ex.Message}", null);
+            return (false, $"Unable to process image", null);
         }
 
         user.FaceID = new FaceID
@@ -110,7 +110,7 @@ internal class FaceIdService : IFaceIdService
 
         await _userRepository.UpdateAsync(user);
 
-        return (true, "Se ha creado correctamente el Face ID", FaceIdMapper.MapToEmployeeFaceIdDto(user.FaceID, base64Image));
+        return (true, "Face ID created successfully", FaceIdMapper.MapToEmployeeFaceIdDto(user.FaceID, base64Image));
     }
 
     private async Task<string> GenerateBase64PngImageAsync(string imageUrl)
