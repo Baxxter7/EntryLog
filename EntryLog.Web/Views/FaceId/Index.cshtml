@@ -69,18 +69,23 @@
             </div>
             <div class="col-md-6">
                 <div id="faceid-container" class="border-2">
-                    <p id="faceid-helper" class="text-sm-start visually-hidden">Acerque el rostro al círculo y mantenga su posición durante 3 segundos</p>
-                    <div style="position: relative; display: inline-block;">
-                        <video id="video" width="550" height="500" autoplay muted></video>
-                        <div id="circle-overlay" class="circle"></div>
-                        <div id="countdown-overlay"></div>
-                        <div id="loader-overlay" class="d-flex justify-content-center align-items-center">
-                            <div class="spinner-border text-white" style="width: 4rem; height: 4rem;">
-                                <span class="visually-hidden">Cargando...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <p id="faceid-helper" class="text-sm-start visually-hidden">Acerque el rostro al círculo y mantenga su posición durante 3 segundos</p>
+    <div style="position: relative; display: inline-block;">
+        <video id="video" width="550" height="500" autoplay muted></video>
+        <div id="circle-overlay" class="circle"></div>
+        <div id="countdown-overlay"></div>
+        <div id="loader-overlay" class="d-flex justify-content-center align-items-center">
+            <div class="spinner-border text-white" style="width: 4rem; height: 4rem;">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+    </div>
+    <div class="mt-2" id="stop-video-btn-container" style="display: none;">
+        <button class="btn btn-danger btn-round" onclick="stopFaceId()">
+            <i class="fas fa-stop"></i> Detener cámara
+        </button>
+    </div>
+</div>
             </div>
             @* <div class="col-md-6">
                 <div id="detector-data"></div>
