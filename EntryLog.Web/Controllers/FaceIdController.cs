@@ -1,4 +1,5 @@
-﻿using EntryLog.Business.Interfaces;
+﻿using EntryLog.Business.DTOs;
+using EntryLog.Business.Interfaces;
 using EntryLog.Web.Extensions;
 using EntryLog.Web.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -19,5 +20,20 @@ public class FaceIdController : Controller
     {
         UserViewModel userData = User.GetUserData()!;
         return View(await _faceIdService.GetFaceIdAsync(userData.NameIdentifier));
+    }
+
+    [HttpPost("empleado/faceid")]
+    public async Task<JsonResult> CreateAsync([FromForm] AddEmployeeFaceIdDto faceIdDto)
+    {
+        UserViewModel user = User.GetUserData()!;
+        (bool success, string message, EmployeeFaceIdDto data) = await _faceIdService.CreateEmployeeFaceIdAsync(
+            new AddEmployeeFaceIdDto(user.NameIdentifier, faceIdDto.image, faceIdDto.Descriptor));
+
+        return Json(new
+        {
+            success,
+            message,
+            data
+        });
     }
 }
