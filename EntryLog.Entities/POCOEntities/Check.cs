@@ -7,5 +7,6 @@ public class Check
     public DateTime Date { get; set; }
     public Location Location { get; set; } = new();
     public string PhotoUrl { get; set; } = string.Empty;
+    public List<float> Descriptor { get; set; } = [];
     public string? Notes { get; set; }
 }
