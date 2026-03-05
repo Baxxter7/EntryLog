@@ -1,144 +1,183 @@
-# 🕒 EntryLog – Sistema de Registro de Asistencia
+# EntryLog - Sistema de Registro de Asistencia
 
-EntryLog es un sistema diseñado para el **registro, control y gestión de jornadas laborales** de empleados. Permite administrar **entradas, salidas, ubicaciones, sesiones de trabajo**, soportando tanto persistencia relacional como NoSQL.
-
-El proyecto está construido con **ASP.NET Core (.NET 8)** y sigue una arquitectura en N-capas, orientada a dominio, preparada para escalar y adaptarse a diferentes motores de base de datos.
-
----
-
-## 🧩 Funcionalidades Principales
-
-* Registro de **Check-In** y **Check-Out** de empleados
-* Control de **sesiones de trabajo** (Work Sessions)
-* Manejo de estados de sesión (InProgress, Closed, etc.)
-* Registro de **ubicación** (latitud, longitud, IP)
-* Asociación de **usuarios de aplicación** (AppUser)
-* Soporte para múltiples métodos de marcaje (dispositivo, app, etc.)
-* Persistencia híbrida: **SQL Server + MongoDB**
+EntryLog es un sistema para registro y control de jornadas laborales. Incluye
+API REST y sitio MVC para gestionar entradas/salidas, ubicacion, sesiones de
+trabajo y datos de empleados, con persistencia SQL Server y MongoDB.
 
 ---
 
-## 🏗️ Arquitectura
+## Funcionalidades principales
 
-El proyecto sigue un enfoque **Clean Architecture / Domain Driven Design (DDD)**:
-
-* **Domain**: Entidades, Value Objects, Enums y reglas de negocio
-* **Application / Business**: DTOs, servicios y casos de uso
-* **Data**: Repositorios, DbContexts, Mongo Collections, Serializadores
-* **API**: Endpoints REST y configuración del host(Por definir)
-
----
-
-## 🔧 Tecnologías Utilizadas
-
-* **.NET 8 / ASP.NET Core**
-* **C# 12**
-* **Entity Framework Core** (SQL Server)
-* **MongoDB Driver** (NoSQL)
-* **Specification Pattern**
-* **Dependency Injection** nativa de ASP.NET Core
-* **SonarQube / SonarLint** (calidad de código)
+- Registro de check-in y check-out.
+- Control de sesiones de trabajo (Work Sessions).
+- Manejo de estados de sesion (InProgress, Completed).
+- Registro de ubicacion (latitud, longitud, IP) y foto.
+- Autenticacion por cookies en Web y JWT para flujos internos (Face ID).
+- Persistencia hibrida: SQL Server (empleados) + MongoDB (usuarios/sesiones).
 
 ---
 
-## 📦 Requisitos Previos
+## Arquitectura y proyectos
 
-Antes de ejecutar el proyecto, asegúrate de tener:
-
-* ✅ **.NET SDK 8**
-* ✅ **SQL Server** (local o remoto)
-* ✅ **MongoDB**
+- `EntryLog.Api`: API ASP.NET Core (controllers, Swagger).
+- `EntryLog.Web`: MVC ASP.NET Core (cookies, session, views).
+- `EntryLog.Business`: servicios, DTOs, mappers, auth, mail.
+- `EntryLog.Data`: repositorios MongoDB y SQL legacy (EF Core).
+- `EntryLog.Entities`: entidades POCO y enums.
+- `EntryLog.slnx`: solucion para build/test.
 
 ---
 
-## 🚀 Configuración del Proyecto
+## Tecnologias
 
-### 1️⃣ Clonar el repositorio
+- .NET 8 / ASP.NET Core
+- C# 12
+- Entity Framework Core (SQL Server)
+- MongoDB Driver
+- Specification pattern
+- Dependency Injection nativa
+
+---
+
+## Requisitos previos
+
+- .NET SDK 8
+- SQL Server accesible
+- MongoDB accesible
+
+---
+
+## Configuracion
+
+### 1) Clonar el repositorio
 
 ```bash
 git clone <url-del-repositorio>
 cd EntryLog
 ```
 
----
+### 2) Configurar `appsettings.json`
 
-### 2️⃣ Configuración de `appsettings.json`
+Las claves esperadas estan en `EntryLog.Api/appsettings.json` y
+`EntryLog.Web/appsettings.json`. Para entornos locales, usa
+`appsettings.Development.json` con tus valores reales.
 
-Ejemplo:
+Ejemplo (valores de muestra):
 
 ```json
 {
   "ConnectionStrings": {
-    "SqlServer": "Server=localhost;Database=EntryLogDb;Trusted_Connection=True;TrustServerCertificate=True;",
-    "MongoDb": "mongodb://localhost:27017"
+    "EmployeeDB": "Server=localhost,1433;Database=EmpleadosBD;User Id=USER;Password=PASSWORD;TrustServerCertificate=True;"
   },
-  "MongoOptions": {
-    "DatabaseName": "EntryLog"
+  "EntryLogDbOptions": {
+    "ConnectionUri": "mongodb://USER:PASSWORD@localhost:27017",
+    "DatabaseName": "ENTRY_LOG"
+  },
+  "ImageBBOptions": {
+    "ApiUrl": "https://api.imgbb.com",
+    "ApiToken": "<token>",
+    "ExpirationSeconds": 0
+  },
+  "MailtrapApiOptions": {
+    "ApiUrl": "https://send.api.mailtrap.io",
+    "ApiToken": "<token>",
+    "FromEmail": "hello@demomailtrap.co",
+    "FromName": "Entry Log",
+    "Templates": [
+      { "Uuid": "<uuid>", "Name": "RecoveryToken" }
+    ]
+  },
+  "Argon2PasswordHashOptions": {
+    "DegreeOfParallelism": 8,
+    "MemorySize": 65536,
+    "Iterations": 4,
+    "SaltSize": 16,
+    "HashSize": 32
+  },
+  "EncryptionKeyValues": {
+    "PublicKey": "<RSAKeyValue>",
+    "PrivateKey": "<RSAKeyValue>"
+  },
+  "JwtConfiguration": {
+    "Secret": "<secret>"
   }
 }
 ```
 
+Nota: evita commitear secretos. Usa `appsettings.Development.json` para
+credenciales locales.
+
 ---
 
-### 3️⃣ Migraciones (SQL Server)
+## Build, run y test
+
+### Restore
 
 ```bash
-dotnet ef migrations add InitialCreate
-dotnet ef database update
+dotnet restore EntryLog.slnx
 ```
 
----
-
-## ▶️ Ejecución
-
-Desde la carpeta del proyecto API:
+### Build
 
 ```bash
-dotnet run
+dotnet build EntryLog.slnx
 ```
 
-El servicio quedará disponible en:
+### Run
 
+```bash
+dotnet run --project EntryLog.Api/EntryLog.Api.csproj
 ```
-https://localhost:7026;http://localhost:5110
+
+```bash
+dotnet run --project EntryLog.Web/EntryLog.Web.csproj
+```
+
+### Tests
+
+No hay proyectos de pruebas en este repo. Si se agregan:
+
+```bash
+dotnet test EntryLog.slnx
 ```
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del proyecto
 
 ```
 EntryLog
-├── EntryLog.API
+├── EntryLog.Api
 │   ├── Controllers
 │   ├── Program.cs
 │   └── appsettings.json
-├── EntryLog.Domain
-│   ├── Entities
-│   ├── Enums
-│   └── ValueObjects
+├── EntryLog.Web
+│   ├── Controllers
+│   ├── Views
+│   ├── wwwroot
+│   └── Program.cs
 ├── EntryLog.Business
 │   ├── DTOs
+│   ├── Interfaces
 │   ├── Services
-│   └── Specifications
+│   └── Mappers
 ├── EntryLog.Data
-│   ├── SqlServer
-│   │   ├── DbContexts
-│   │   └── Repositories
-│   ├── Mongo
-│   │   ├── Collections
-│   │   └── BsonSerializers
-│   └── DependencyInjection
-└── EntryLog.sln
+│   ├── MongoDB
+│   ├── SqlLegacy
+│   └── Specifications
+├── EntryLog.Entities
+│   ├── POCOEntities
+│   └── Enums
+└── EntryLog.slnx
 ```
 
 ---
 
-## 🛠️ Patrones y Buenas Prácticas
+## Patrones y practicas
 
-* Repository Pattern
-* Specification Pattern
-* Records para DTOs
-* Separación clara de capas
-* AsNoTracking para consultas de solo lectura
-* Serialización personalizada para MongoDB
+- Repository pattern
+- Specification pattern
+- DTOs con records
+- Separacion clara de capas
+- Guard clauses y early return en servicios
+- Fecha/hora en UTC (`DateTime.UtcNow`)
