@@ -8,6 +8,7 @@ using EntryLog.Business.Specs;
 using EntryLog.Data.Interfaces;
 using EntryLog.Entities.Enums;
 using EntryLog.Entities.POCOEntities;
+using System.Text.Json;
 
 namespace EntryLog.Business.Services;
 
@@ -18,6 +19,8 @@ internal class WorkSessionServices : IWorkSessionServices
     private readonly IEmployeeRepository _employeeRepository;
     private readonly ILoadImagesService _loadImageService;
     private readonly IUriService _uriService;
+
+    private int DescriptorLength = 128;
 
     public WorkSessionServices(
         IWorkSessionRepository workSessionRepository,
@@ -106,7 +109,7 @@ internal class WorkSessionServices : IWorkSessionServices
         return PaginatedResult<GetWorkSessionDto>.Create(results, filter, count);
     }
 
-    public async Task<(bool success, string message)> OpenJobSessionAsync(CreateJobSessionDto sessionDto)
+    public async Task<(bool success, string message)> OpenJobSessionAsync(CreateWorkSessionDto sessionDto)
     {
         int code = int.Parse(sessionDto.UserId);
         var (sucess, message) = await ValidateEmployeeUserAsync(code);
@@ -121,11 +124,25 @@ internal class WorkSessionServices : IWorkSessionServices
             return (false, "The employee has an active session");
         }
 
-        string filename = sessionDto.Image.FileName;
         string extension = Path.GetExtension(sessionDto.Image.FileName);
+        string filename = $"checkIn-{DateTime.UtcNow}{extension}";
 
         string? imageBBUrl = await _loadImageService
             .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename);
+
+        List<float> descriptor = new List<float>();
+
+        try
+        {
+            descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.descriptor);
+        }
+        catch (Exception)
+        {
+            return (false, "Descriptor is invalid");
+        }
+
+        if (descriptor is null || descriptor.Count != DescriptorLength)
+            return (false, "Descriptor is invalid");
 
         session = new WorkSession
         {
@@ -142,6 +159,7 @@ internal class WorkSessionServices : IWorkSessionServices
                     IpAddress = _uriService.RemoteIpAddress,
                 },
                 Notes = sessionDto.Notes ?? null,
+                Descriptor = descriptor,
                 PhotoUrl = imageBBUrl
             },
             Status = SessionStatus.InProgress
