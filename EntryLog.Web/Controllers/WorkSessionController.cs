@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EntryLog.Web.Controllers;
 
-[Authorize(Roles ="Employee")]
+[Authorize(Roles = "Employee")]
 public class WorkSessionController : Controller
 {
     private readonly IWorkSessionServices _workSessionService;
