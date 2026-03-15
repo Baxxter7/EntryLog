@@ -14,7 +14,7 @@ internal static class JwtValidator
         if (expires != null && expires <= now)
             return false;
 
-        if(notBefore != null && notBefore > now)
+        if (notBefore != null && notBefore > now)
             return false;
 
         return true;
