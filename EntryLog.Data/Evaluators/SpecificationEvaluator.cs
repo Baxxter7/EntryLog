@@ -1,12 +1,13 @@
 ﻿using EntryLog.Data.Specifications;
 
 namespace EntryLog.Data.Evaluators;
-internal class SpecificationEvaluator <TEntity>  where TEntity : class
+
+internal class SpecificationEvaluator<TEntity> where TEntity : class
 {
     public static IQueryable<TEntity> GetQuery
         (IQueryable<TEntity> inputQuery, ISpecification<TEntity> specification)
     {
-        if(specification == null)
+        if (specification == null)
             return inputQuery;
 
         var query = inputQuery.Where(specification.Expression);
@@ -28,6 +29,6 @@ internal class SpecificationEvaluator <TEntity>  where TEntity : class
         }
 
         return query;
-        
+
     }
 }
