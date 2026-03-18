@@ -49,4 +49,16 @@ public class FaceIdController : Controller
 
         return Ok(new { token });
     }
+
+    [HttpGet("/empleado/faceid/reference")]
+    public async Task<IActionResult> GetReferenceImageAsync([FromHeader(Name = "Authorization")] string authHeader)
+    {
+        UserViewModel? user = User.GetUserData();
+
+        if(user is null)
+            return Unauthorized();
+        string imageBase64 = await _faceIdService.GenerateReferenceImageTokenAsync(authHeader);
+
+        return Ok(new { imageBase64 });
+    }
 }
