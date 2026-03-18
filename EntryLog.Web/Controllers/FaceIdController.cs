@@ -36,4 +36,17 @@ public class FaceIdController : Controller
             data
         });
     }
+
+    [HttpGet("/empleado/faceid/session")]
+    public async Task<IActionResult> GenerateSecurityTokenAsync()
+    {
+        UserViewModel? user = User.GetUserData();
+        if (user is null)
+            return Unauthorized();
+
+        var token = await _faceIdService
+            .GenerateReferenceImageTokenAsync(user.NameIdentifier.ToString());
+
+        return Ok(new { token });
+    }
 }
