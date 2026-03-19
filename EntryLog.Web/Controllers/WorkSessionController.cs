@@ -35,4 +35,26 @@ public class WorkSessionController : Controller
 
         return View(model);
     }
+
+    [HttpPost("/emleado/sessiones/abrir")]
+    public async Task<JsonResult> OpenWorkSessionAsync(OpenWorkSessionViewModel model)
+    {
+        UserViewModel userData = User.GetUserData()!;
+        (bool success, string message, GetWorkSessionDto data) = await _workSessionService.OpenJobSessionAsync(new CreateWorkSessionDto(
+            userData.NameIdentifier.ToString(),
+            model.Latitude,
+            model.Longitude,
+            model.Image,
+            model.Notes,
+            model.Descriptor
+            )
+        );
+
+        return Json(new
+        {
+            success, 
+            message, 
+            data 
+        });
+    }
 }
