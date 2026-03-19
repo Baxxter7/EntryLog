@@ -20,7 +20,7 @@ public class JobSessionController : ControllerBase
     [HttpPost("open")]
     public async Task<object> OpenJobSessionAsync([FromForm] CreateWorkSessionDto jobSessionDto)
     {
-        (bool success, string message) = await _workSessionServices.OpenJobSessionAsync(jobSessionDto);
+        (bool success, string message, GetWorkSessionDto? data) = await _workSessionServices.OpenJobSessionAsync(jobSessionDto);
         return Ok(new
         {
             success,
