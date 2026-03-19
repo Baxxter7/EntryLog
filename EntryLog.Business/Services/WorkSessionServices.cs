@@ -109,19 +109,19 @@ internal class WorkSessionServices : IWorkSessionServices
         return PaginatedResult<GetWorkSessionDto>.Create(results, filter, count);
     }
 
-    public async Task<(bool success, string message)> OpenJobSessionAsync(CreateWorkSessionDto sessionDto)
+    public async Task<(bool success, string message, GetWorkSessionDto? data)> OpenJobSessionAsync(CreateWorkSessionDto sessionDto)
     {
         int code = int.Parse(sessionDto.UserId);
         var (sucess, message) = await ValidateEmployeeUserAsync(code);
 
         if (!sucess)
-            return (sucess, message);
+            return (sucess, message, null);
 
         WorkSession session = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
         if (session is not null)
         {
-            return (false, "The employee has an active session");
+            return (false, "The employee has an active session", null);
         }
 
         string extension = Path.GetExtension(sessionDto.Image.FileName);
@@ -138,11 +138,11 @@ internal class WorkSessionServices : IWorkSessionServices
         }
         catch (Exception)
         {
-            return (false, "Descriptor is invalid");
+            return (false, "Descriptor is invalid", null);
         }
 
         if (descriptor is null || descriptor.Count != DescriptorLength)
-            return (false, "Descriptor is invalid");
+            return (false, "Descriptor is invalid", null);
 
         session = new WorkSession
         {
@@ -167,7 +167,7 @@ internal class WorkSessionServices : IWorkSessionServices
 
         await _workSessionRepository.CreateAsync(session);
 
-        return (true, "Session opened successfully");
+        return (true, "Session opened successfully", WorkSessionMapper.MapToGetWorkSessionDto(session));
     }
 
     private async Task<(bool success, string message)> ValidateEmployeeUserAsync(int code)
