@@ -5,7 +5,7 @@ public record GetWorkSessionDto
     string Id,
     int EmployeeId,
     GetCheckDto CheckIn,
-    GetCheckDto CheckOut,
+    GetCheckDto? CheckOut,
     TimeSpan? TotalWorked,
     string Status
 );
