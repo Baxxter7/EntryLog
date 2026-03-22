@@ -57,7 +57,7 @@ public class FaceIdController : Controller
 
         if(user is null)
             return Unauthorized();
-        string imageBase64 = await _faceIdService.GenerateReferenceImageTokenAsync(authHeader);
+        string imageBase64 = await _faceIdService.GetReferenceImageAsync(authHeader);
 
         return Ok(new { imageBase64 });
     }
