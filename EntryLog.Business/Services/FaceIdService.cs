@@ -100,6 +100,9 @@ internal class FaceIdService : IFaceIdService
             return (false, $"Unable to process image", null);
         }
 
+        if (string.IsNullOrEmpty(base64Image))
+            return (false, "Unable to process image", null);
+
         user.FaceID = new FaceID
         {
             ImageUrl = imageUrl,
