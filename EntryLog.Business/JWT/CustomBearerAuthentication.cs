@@ -40,7 +40,10 @@ internal class CustomBearerAuthentication : IJwtService
     {
         try
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler
+            {
+                MapInboundClaims = false
+            };
             var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = false,
