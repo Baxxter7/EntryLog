@@ -38,7 +38,9 @@ internal class WorkSessionServices : IWorkSessionServices
 
     public async Task<(bool success, string message)> ClosedJobSessionAsync(CloseJobSessionDto sessionDto)
     {
-        int code = int.Parse(sessionDto.UserId);
+        if (!int.TryParse(sessionDto.UserId, out int code))
+            return (false, "Invalid user id");
+
         var (sucess, message) = await ValidateEmployeeUserAsync(code);
 
         if (!sucess)
@@ -51,8 +53,20 @@ internal class WorkSessionServices : IWorkSessionServices
 
         string filename = sessionDto.Image.FileName;
 
-        string? imageBBUrl = await _loadImageService
-       .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename);
+        string? imageBBUrl;
+
+        try
+        {
+            imageBBUrl = await _loadImageService
+                .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename);
+        }
+        catch
+        {
+            return (false, "Unable to upload image");
+        }
+
+        if (string.IsNullOrEmpty(imageBBUrl))
+            return (false, "Unable to upload image");
 
         activeSession.CheckOut ??= new Check();
         activeSession.CheckOut.Method = _uriService.UserAgent;
@@ -111,7 +125,9 @@ internal class WorkSessionServices : IWorkSessionServices
 
     public async Task<(bool success, string message, GetWorkSessionDto? data)> OpenJobSessionAsync(CreateWorkSessionDto sessionDto)
     {
-        int code = int.Parse(sessionDto.UserId);
+        if (!int.TryParse(sessionDto.UserId, out int code))
+            return (false, "Invalid user id", null);
+
         var (sucess, message) = await ValidateEmployeeUserAsync(code);
 
         if (!sucess)
@@ -123,12 +139,6 @@ internal class WorkSessionServices : IWorkSessionServices
         {
             return (false, "The employee has an active session", null);
         }
-
-        string extension = Path.GetExtension(sessionDto.Image.FileName);
-        string filename = $"checkIn-{DateTime.UtcNow}{extension}";
-
-        string? imageBBUrl = await _loadImageService
-            .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename);
 
         List<float> descriptor = new List<float>();
 
@@ -143,6 +153,24 @@ internal class WorkSessionServices : IWorkSessionServices
 
         if (descriptor is null || descriptor.Count != DescriptorLength)
             return (false, "Descriptor is invalid", null);
+
+        string extension = Path.GetExtension(sessionDto.Image.FileName);
+        string filename = $"checkIn-{DateTime.UtcNow}{extension}";
+
+        string? imageBBUrl;
+
+        try
+        {
+            imageBBUrl = await _loadImageService
+                .UploadAsync(sessionDto.Image.OpenReadStream(), sessionDto.Image.ContentType, filename);
+        }
+        catch
+        {
+            return (false, "Unable to upload image", null);
+        }
+
+        if (string.IsNullOrEmpty(imageBBUrl))
+            return (false, "Unable to upload image", null);
 
         session = new WorkSession
         {
