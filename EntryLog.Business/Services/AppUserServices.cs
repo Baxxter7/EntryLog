@@ -36,6 +36,9 @@ internal class AppUserServices : IAppUserServices
         if (string.IsNullOrEmpty(recoveryDto.Token))
             return (false, "Invalid token");
 
+        if (string.IsNullOrEmpty(recoveryDto.Password) || recoveryDto.Password != recoveryDto.PasswordConf)
+            return (false, "Passwords do not match");
+
         string recoveryTokenPlain;
 
         try
@@ -63,12 +66,22 @@ internal class AppUserServices : IAppUserServices
         if (user is null || !string.Equals(username, user.Email, StringComparison.OrdinalIgnoreCase))
             return (false, "Invalid token");
 
-        var tokenDate = DateTime.FromBinary(ticks);
+        DateTime tokenDate;
+
+        try
+        {
+            tokenDate = DateTime.FromBinary(ticks);
+        }
+        catch
+        {
+            return (false, "Invalid token");
+        }
+
         var now = DateTime.UtcNow;
 
         const int expirationMinutes = 30;
 
-        if ((now - tokenDate).TotalMinutes <= expirationMinutes)
+        if (tokenDate <= now && (now - tokenDate).TotalMinutes <= expirationMinutes)
         {
             user.Password = _hasherService.Hash(recoveryDto.Password);
             await FinalizeRecovery(user);
@@ -98,14 +111,12 @@ internal class AppUserServices : IAppUserServices
         if (!user.Active)
             return (false, "Account recovery was not successful.");
 
-        string recoveryTokenPlain = $"{DateTime.UtcNow.Ticks}:{user.Email}";
+        string recoveryTokenPlain = $"{DateTime.UtcNow.ToBinary()}:{user.Email}";
 
         string recoveryToken = _encryptionService.Encrypt(recoveryTokenPlain);
 
         user.RecoveryToken = recoveryToken;
         user.RecoveryTokenActive = true;
-
-        await _appUserRepository.UpdateAsync(user);
 
         var vars = new RecoveryAccountVariables
         {
@@ -113,15 +124,20 @@ internal class AppUserServices : IAppUserServices
             Url = $"{_uriService.ApplicationURL}/account/recovery?token={recoveryToken}"
         };
 
-        // bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email, vars);
-        bool isSend = true;
+        bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email, vars);
 
-        return (isSend, isSend ? $"email sent to account {user.Email}" : "An error occurred while sending the email");
+        if (!isSend)
+            return (false, "An error occurred while sending the email");
+
+        await _appUserRepository.UpdateAsync(user);
+
+        return (true, $"email sent to account {user.Email}");
     }
 
     public async Task<(bool success, string message, LoginResponseDto? data)> RegisterEmployeeAsync(CreateEmployeeUserDto employeeDto)
     {
-        int code = int.Parse(employeeDto.DocumentNumber);
+        if (!int.TryParse(employeeDto.DocumentNumber, out int code))
+            return (false, "Invalid employee code", null);
 
         Employee? employee = await _employeeRepository.GetByCodeAsync(code);
 
@@ -139,7 +155,7 @@ internal class AppUserServices : IAppUserServices
             return (false, "The user already exists", null);
 
         if (string.IsNullOrEmpty(employeeDto.Password) || employeeDto.Password != employeeDto.PasswordConf)
-            return (false, "The user already exists", null);
+            return (false, "Passwords do not match", null);
 
         user = new AppUser
         {
