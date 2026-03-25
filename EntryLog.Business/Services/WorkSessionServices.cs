@@ -213,4 +213,29 @@ internal class WorkSessionServices : IWorkSessionServices
         return (true, "");
     }
 
+    private async Task<(bool success, string message)> ValidateEmployeeFaceDescriptorAsync(int employeeCode, float[] currentDescriptor)
+    {
+        if (currentDescriptor is null || currentDescriptor.Length != 128)
+            return (false, "Descriptor no válido");
+
+        AppUser? user = await _appUserRepository.GetByCodeAsync(employeeCode);
+        List<float>? storeDescriptor = user?.FaceID?.Descriptor;
+
+        if(storeDescriptor is null)
+            return (false, "FaceId no configurado");
+
+        double distance = EuclideanDistance(currentDescriptor, [.. storeDescriptor]);
+        bool match = distance < 0.5;
+
+        return (match, match ? "" : "El rostro no coincide con el FaceId registrado");
+
+    }
+    private static double EuclideanDistance(float[] currentDescriptor, float[] storeDescriptor)
+    {
+        double sum = 0;
+        for (int i = 0; i < currentDescriptor.Length; i++)
+            sum += Math.Pow(currentDescriptor[i] - storeDescriptor[i], 2);
+        return Math.Sqrt(sum);
+
+    }
 }
