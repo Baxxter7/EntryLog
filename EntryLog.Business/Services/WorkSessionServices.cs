@@ -128,10 +128,10 @@ internal class WorkSessionServices : IWorkSessionServices
         if (!int.TryParse(sessionDto.UserId, out int code))
             return (false, "Invalid user id", null);
 
-        var (sucess, message) = await ValidateEmployeeUserAsync(code);
+        var (success, message) = await ValidateEmployeeUserAsync(code);
 
-        if (!sucess)
-            return (sucess, message, null);
+        if (!success)
+            return (success, message, null);
 
         WorkSession session = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
@@ -171,6 +171,10 @@ internal class WorkSessionServices : IWorkSessionServices
 
         if (string.IsNullOrEmpty(imageBBUrl))
             return (false, "Unable to upload image", null);
+
+        (success, message) = await ValidateEmployeeFaceDescriptorAsync(code, [.. descriptor]);
+        if (!success)
+            return (success, message, null);
 
         session = new WorkSession
         {
