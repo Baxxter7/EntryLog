@@ -36,7 +36,6 @@ check-in/check-out y sesiones de trabajo con persistencia hibrida en SQL Server 
 
 El proyecto sigue una separacion por capas:
 
-- `EntryLog.Api`: API ASP.NET Core (controllers + Swagger).
 - `EntryLog.Web`: Web MVC ASP.NET Core (cookies, vistas, JS).
 - `EntryLog.Business`: logica de aplicacion, DTOs, mappers, seguridad, integraciones.
 - `EntryLog.Data`: acceso a datos (MongoDB + EF Core SQL legacy).
@@ -46,7 +45,7 @@ El proyecto sigue una separacion por capas:
 
 - .NET 8 (`net8.0`)
 - C# 12
-- ASP.NET Core Web API + MVC
+- ASP.NET Core + MVC
 - C# (nullable reference types habilitado)
 - EF Core 8 (SQL Server)
 - MongoDB Driver
@@ -62,7 +61,6 @@ El proyecto sigue una separacion por capas:
 - .NET SDK 8.x
 - SQL Server accesible
 - MongoDB accesible
-- (Opcional) Visual Studio 2022 o VS Code
 
 ## Instalacion rapida
 
@@ -126,16 +124,6 @@ dotnet restore EntryLog.slnx
 dotnet build EntryLog.slnx
 ```
 
-### Ejecutar API
-
-```bash
-dotnet run --project EntryLog.Api/EntryLog.Api.csproj
-```
-
-Swagger disponible en entorno Development:
-
-- `https://localhost:7026/swagger`
-- `http://localhost:5110/swagger`
 
 ### Ejecutar Web MVC
 
