@@ -9,4 +9,5 @@ public interface IWorkSessionServices
     Task<(bool success, string message, GetWorkSessionDto? data)> OpenJobSessionAsync(CreateWorkSessionDto sessionDto);
     Task<(bool success, string message)> ClosedJobSessionAsync(CloseJobSessionDto sessionDto);
     Task<PaginatedResult<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter);
+    Task<bool> HasActiveAnySessionAsync(int employeeCode);
 }

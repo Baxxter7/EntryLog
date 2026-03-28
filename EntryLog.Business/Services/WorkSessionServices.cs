@@ -242,4 +242,10 @@ internal class WorkSessionServices : IWorkSessionServices
         return Math.Sqrt(sum);
 
     }
+
+    public async Task<bool> HasActiveAnySessionAsync(int employeeCode)
+    {
+        WorkSession session = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(employeeCode);
+        return session is not null;
+    }
 }
