@@ -60,7 +60,6 @@ TestResults/
 # Publish outputs
 # ==============================
 publish/
-wwwroot/
 app.publish/
 
 # ==============================
