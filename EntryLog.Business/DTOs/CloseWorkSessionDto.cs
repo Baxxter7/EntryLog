@@ -2,11 +2,12 @@
 
 namespace EntryLog.Business.DTOs;
 
-public record CloseJobSessionDto(
+public record CloseWorkSessionDto(
    string? SessionId,
    string UserId,
    string Latitude,
    string Longitude,
    IFormFile Image,
-   string? Notes
+   string? Notes,
+   string Descriptor
 );
