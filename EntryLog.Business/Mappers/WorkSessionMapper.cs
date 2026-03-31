@@ -32,7 +32,8 @@ internal static class WorkSessionMapper
                 ),
                 session.CheckOut.PhotoUrl,
                 session.CheckOut.Notes) : null,
-                session.TotalWorked,
+                session.TotalWorked?.ToString(@"hh\:mm\:ss"),
+                //session.TotalWorked,
                 session.Status.ToString()
             );
     }
