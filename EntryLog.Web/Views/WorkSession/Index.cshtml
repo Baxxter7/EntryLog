@@ -114,9 +114,7 @@
                     </div>
                     <div class="col-3">
                         <h6 class="fw-bolder">Duración:</h6>
-                        <p class="card-text">
-                            @((item.TotalWorked?.ToString(@"hh\:mm\ss")) ?? "N/A")
-                        </p>
+                        <p id="total-worked-@item.Id" class="card-text">@(item.TotalWorked ?? "N/A")</p>
                     </div>
                 </div>
             </div>
