@@ -27,6 +27,9 @@ public class WorkSessionController : Controller
         EmployeeFaceIdDto faceId = await _faceIdService.GetFaceIdAsync(userData.NameIdentifier);
         ViewBag.IsFaceIdActive = faceId.Active;
 
+        bool hasActiveSession = await _workSessionService.HasActiveAnySessionAsync(userData.NameIdentifier);
+        ViewBag.HasActiveSession = hasActiveSession;
+
         PaginatedResult<GetWorkSessionDto> model = await _workSessionService.GetSessionListByFilterAsync(new WorkSessionQueryFilter
         {
             EmployeeId = userData.NameIdentifier,
