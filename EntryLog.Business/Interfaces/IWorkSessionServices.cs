@@ -7,7 +7,7 @@ namespace EntryLog.Business.Interfaces;
 public interface IWorkSessionServices
 {
     Task<(bool success, string message, GetWorkSessionDto? data)> OpenJobSessionAsync(CreateWorkSessionDto sessionDto);
-    Task<(bool success, string message)> ClosedJobSessionAsync(CloseJobSessionDto sessionDto);
+    Task<(bool success, string message, GetWorkSessionDto? data)> ClosedJobSessionAsync(CloseWorkSessionDto sessionDto);
     Task<PaginatedResult<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter);
     Task<bool> HasActiveAnySessionAsync(int employeeCode);
 }

@@ -36,22 +36,34 @@ internal class WorkSessionServices : IWorkSessionServices
         _uriService = uriService;
     }
 
-    public async Task<(bool success, string message)> ClosedJobSessionAsync(CloseJobSessionDto sessionDto)
+    public async Task<(bool success, string message, GetWorkSessionDto? data)> ClosedJobSessionAsync(CloseWorkSessionDto sessionDto)
     {
         if (!int.TryParse(sessionDto.UserId, out int code))
-            return (false, "Invalid user id");
+            return (false, "Invalid user id", null);
 
         var (sucess, message) = await ValidateEmployeeUserAsync(code);
 
         if (!sucess)
-            return (sucess, message);
+            return (sucess, message, null);
 
         WorkSession? activeSession = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(code);
 
         if (activeSession is null)
-            return (false, "There is no active session for the user");
+            return (false, "There is no active session for the user", null);
 
-        string filename = sessionDto.Image.FileName;
+        List<float> descriptor = new List<float>();
+        try
+        {
+            descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.Descriptor);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
+        string extension = Path.GetExtension(sessionDto.Image.FileName);
+        string filename = $"checkout-{DateTime.UtcNow}{extension}";
 
         string? imageBBUrl;
 
@@ -62,11 +74,11 @@ internal class WorkSessionServices : IWorkSessionServices
         }
         catch
         {
-            return (false, "Unable to upload image");
+            return (false, "Unable to upload image", null);
         }
 
         if (string.IsNullOrEmpty(imageBBUrl))
-            return (false, "Unable to upload image");
+            return (false, "Unable to upload image", null);
 
         activeSession.CheckOut ??= new Check();
         activeSession.CheckOut.Method = _uriService.UserAgent;
@@ -77,10 +89,11 @@ internal class WorkSessionServices : IWorkSessionServices
         activeSession.CheckOut.Location.IpAddress = _uriService.RemoteIpAddress;
         activeSession.CheckOut.PhotoUrl = imageBBUrl;
         activeSession.CheckOut.Notes = sessionDto.Notes;
+        activeSession.CheckOut.Descriptor = descriptor;
         activeSession.Status = SessionStatus.Completed;
 
         await _workSessionRepository.UpdateAsync(activeSession);
-        return (true, "Session closed successfully");
+        return (true, "Session closed successfully", null);
     }
 
     public async Task<PaginatedResult<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter)
