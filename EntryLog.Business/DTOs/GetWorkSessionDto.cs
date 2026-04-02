@@ -13,7 +13,7 @@ public record GetWorkSessionDto
 public record GetCheckDto(
     string Method,
     string? DeviceName,
-    DateTime Date,
+    string Date,
     GetLocationDto Location,
     string PhotoUrl,
     string? Notes
