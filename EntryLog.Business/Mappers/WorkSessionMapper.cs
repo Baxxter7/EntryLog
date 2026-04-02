@@ -1,4 +1,5 @@
 ﻿using EntryLog.Business.DTOs;
+using EntryLog.Business.Utils;
 using EntryLog.Entities.POCOEntities;
 
 namespace EntryLog.Business.Mappers;
@@ -13,7 +14,7 @@ internal static class WorkSessionMapper
             new GetCheckDto(
                 session.CheckIn.Method,
                 session.CheckIn.DeviceName,
-                session.CheckIn.Date,
+                TimeFunctions.GetCentralAmericaStandardTime(session.CheckIn.Date).ToString("yyyy-MM-dd hh:mm"),
                 new GetLocationDto(
                     session.CheckIn.Location.Latitude,
                     session.CheckIn.Location.Longitude,
@@ -24,7 +25,7 @@ internal static class WorkSessionMapper
                 session.CheckOut != null ? new GetCheckDto(
                 session.CheckOut.Method,
                 session.CheckOut.DeviceName,
-                session.CheckOut.Date,
+                TimeFunctions.GetCentralAmericaStandardTime(session.CheckOut.Date).ToString("yyyy-MM-dd hh:mm"),
                 new GetLocationDto(
                     session.CheckOut.Location.Latitude,
                     session.CheckOut.Location.Longitude,
@@ -33,7 +34,6 @@ internal static class WorkSessionMapper
                 session.CheckOut.PhotoUrl,
                 session.CheckOut.Notes) : null,
                 session.TotalWorked?.ToString(@"hh\:mm\:ss"),
-                //session.TotalWorked,
                 session.Status.ToString()
             );
     }
