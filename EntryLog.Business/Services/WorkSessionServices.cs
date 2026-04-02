@@ -93,7 +93,7 @@ internal class WorkSessionServices : IWorkSessionServices
         activeSession.Status = SessionStatus.Completed;
 
         await _workSessionRepository.UpdateAsync(activeSession);
-        return (true, "Session closed successfully", null);
+        return (true, "Session closed successfully", WorkSessionMapper.MapToGetWorkSessionDto(activeSession));
     }
 
     public async Task<PaginatedResult<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter)
