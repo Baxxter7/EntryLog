@@ -60,4 +60,28 @@ public class WorkSessionController : Controller
             data 
         });
     }
+
+    [HttpPost("empleado/sessiones/cerrar")]
+    public async Task<JsonResult> CloseWorkSessionAsync(CloseWorkSessionViewModel model)
+    {
+        UserViewModel userData = User.GetUserData()!;
+        (bool success, string message, GetWorkSessionDto? data) = await _workSessionService.ClosedJobSessionAsync(
+             new CloseWorkSessionDto(
+                 model.sessionId,
+                 userData.NameIdentifier.ToString(),
+                 model.Latitude,
+                 model.Longitude,
+                 model.Image,
+                 model.Notes,
+                 model.Descriptor
+             )
+        );
+
+        return Json(new
+        {
+            success,
+            message,
+            data
+        });
+    }
 }
