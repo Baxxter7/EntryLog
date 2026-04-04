@@ -103,13 +103,13 @@
                     <div class="col-3">
                         <h6 class="fw-bolder">Entrada:</h6>
                         <p class="card-text">
-                            @item.CheckIn.Date.ToString("dd/MM/yyyy hh:mm:ss tt")
+                            @item.CheckIn.Date
                         </p>
                     </div>
                     <div class="col-3">
                         <h6 class="fw-bolder">Salida:</h6>
                         <p class="card-text">
-                            @(item.CheckOut != null ? item.CheckOut.Date.ToString("dd/MM/yyyy hh:mm:ss tt") : "No presenta")
+                            @(item.CheckOut != null ? item.CheckOut.Date : "No presenta")
                         </p>
                     </div>
                     <div class="col-3">
