@@ -36,7 +36,7 @@ internal class WorkSessionServices : IWorkSessionServices
         _uriService = uriService;
     }
 
-    public async Task<(bool success, string message, GetWorkSessionDto? data)> ClosedJobSessionAsync(CloseWorkSessionDto sessionDto)
+    public async Task<(bool success, string message, GetWorkSessionDto? data)> ClosedSessionAsync(CloseWorkSessionDto sessionDto)
     {
         if (!int.TryParse(sessionDto.UserId, out int code))
             return (false, "Invalid user id", null);
@@ -136,7 +136,7 @@ internal class WorkSessionServices : IWorkSessionServices
         return PaginatedResult<GetWorkSessionDto>.Create(results, filter, count);
     }
 
-    public async Task<(bool success, string message, GetWorkSessionDto? data)> OpenJobSessionAsync(CreateWorkSessionDto sessionDto)
+    public async Task<(bool success, string message, GetWorkSessionDto? data)> OpenSessionAsync(CreateWorkSessionDto sessionDto)
     {
         if (!int.TryParse(sessionDto.UserId, out int code))
             return (false, "Invalid user id", null);
@@ -238,7 +238,7 @@ internal class WorkSessionServices : IWorkSessionServices
         AppUser? user = await _appUserRepository.GetByCodeAsync(employeeCode);
         List<float>? storeDescriptor = user?.FaceID?.Descriptor;
 
-        if(storeDescriptor is null)
+        if (storeDescriptor is null)
             return (false, "FaceId no configurado");
 
         double distance = EuclideanDistance(currentDescriptor, [.. storeDescriptor]);
