@@ -5,7 +5,7 @@ namespace EntryLog.Business.DTOs;
 internal class ImageBBResponseDto
 {
     [JsonPropertyName("data")]
-    public Data Data { get; set; }
+    public Data? Data { get; set; }
 
     [JsonPropertyName("success")]
     public bool Success { get; set; }
@@ -17,19 +17,19 @@ internal class ImageBBResponseDto
 internal class Data
 {
     [JsonPropertyName("id")]
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     [JsonPropertyName("title")]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     [JsonPropertyName("url_viewer")]
-    public string UrlViewer { get; set; }
+    public string? UrlViewer { get; set; }
 
     [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public string? Url { get; set; }
 
     [JsonPropertyName("display_url")]
-    public string DisplayUrl { get; set; }
+    public string? DisplayUrl { get; set; }
 
     [JsonPropertyName("width")]
     public int Width { get; set; }
@@ -47,68 +47,68 @@ internal class Data
     public int Expiration { get; set; }
 
     [JsonPropertyName("image")]
-    public Image Image { get; set; }
+    public Image? Image { get; set; }
 
     [JsonPropertyName("thumb")]
-    public Thumb Thumb { get; set; }
+    public Thumb? Thumb { get; set; }
 
     [JsonPropertyName("medium")]
-    public Medium Medium { get; set; }
+    public Medium? Medium { get; set; }
 
     [JsonPropertyName("delete_url")]
-    public string DeleteUrl { get; set; }
+    public string? DeleteUrl { get; set; }
 }
 
 internal class Image
 {
     [JsonPropertyName("filename")]
-    public string Filename { get; set; }
+    public string? Filename { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonPropertyName("mime")]
-    public string Mime { get; set; }
+    public string? Mime { get; set; }
 
     [JsonPropertyName("extension")]
-    public string Extension { get; set; }
+    public string? Extension { get; set; }
 
     [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public string? Url { get; set; }
 }
 
 internal class Medium
 {
     [JsonPropertyName("filename")]
-    public string Filename { get; set; }
+    public string? Filename { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonPropertyName("mime")]
-    public string Mime { get; set; }
+    public string? Mime { get; set; }
 
     [JsonPropertyName("extension")]
-    public string Extension { get; set; }
+    public string? Extension { get; set; }
 
     [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public string? Url { get; set; }
 }
 
 internal class Thumb
 {
     [JsonPropertyName("filename")]
-    public string Filename { get; set; }
+    public string? Filename { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonPropertyName("mime")]
-    public string Mime { get; set; }
+    public string? Mime { get; set; }
 
     [JsonPropertyName("extension")]
-    public string Extension { get; set; }
+    public string? Extension { get; set; }
 
     [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public string? Url { get; set; }
 }

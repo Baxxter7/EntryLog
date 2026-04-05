@@ -37,7 +37,10 @@ internal class ImageBBService : ILoadImagesService
 
         string responseBody = await response.Content.ReadAsStringAsync();
 
-        ImageBBResponseDto imageBBResponse = JsonSerializer.Deserialize<ImageBBResponseDto>(responseBody);
+        ImageBBResponseDto? imageBBResponse = JsonSerializer.Deserialize<ImageBBResponseDto>(responseBody);
+
+        if (imageBBResponse?.Data?.Url is null)
+            return null;
 
         return imageBBResponse.Data.Url;
     }
