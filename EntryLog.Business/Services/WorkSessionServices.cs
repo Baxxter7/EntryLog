@@ -261,4 +261,12 @@ internal class WorkSessionServices : IWorkSessionServices
         WorkSession session = await _workSessionRepository.GetActiveSessionByEmployeeIdAsync(employeeCode);
         return session is not null;
     }
+
+    public async Task<GetWorkSessionDto?> GetSessionByIdAsync(string id)
+    {
+        Guid guid = Guid.Parse(id);
+
+        WorkSession? session = await _workSessionRepository.GetByIdAsync(guid);
+        return WorkSessionMapper.MapToGetWorkSessionDto(session!);
+    }
 }
