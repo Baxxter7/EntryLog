@@ -42,25 +42,25 @@ internal class FaceIdService : IFaceIdService
         if (string.IsNullOrWhiteSpace(faceIdDto.Descriptor))
             return (false, "Descriptor is required", null);
 
-        List<float> descriptor = new List<float>();
-        try
-        {
-            descriptor = JsonSerializer.Deserialize<List<float>>(faceIdDto.Descriptor);
-        }
-        catch (JsonException ex)
-        {
-            return (false, $"Invalid descriptor format", null);
-        }
+    List<float>? descriptor;
+    try
+    {
+        descriptor = JsonSerializer.Deserialize<List<float>>(faceIdDto.Descriptor);
+    }
+    catch (JsonException)
+    {
+        return (false, $"Invalid descriptor format", null);
+    }
 
-        if (descriptor is null || descriptor.Count != DescriptorLength)
-            return (false, "Descriptor length no valid", null);
+    if (descriptor is null || descriptor.Count != DescriptorLength)
+        return (false, "Descriptor length no valid", null);
 
         var userTask = _userRepository.GetByCodeAsync(faceIdDto.EmployeeCode);
         var employeeTask = _employeeRepository.GetByCodeAsync(faceIdDto.EmployeeCode);
 
-        await Task.WhenAll(userTask, employeeTask);
-        AppUser user = await userTask;
-        Employee employee = await employeeTask;
+    await Task.WhenAll(userTask, employeeTask);
+    AppUser? user = await userTask;
+    Employee? employee = await employeeTask;
 
         if (employee is null)
             return (false, "An error while fetching the employee", null);
@@ -71,34 +71,34 @@ internal class FaceIdService : IFaceIdService
         if (user.FaceID is not null && user.FaceID.Active)
             return (false, "FaceID is already set up", null);
 
-        var ext = Path.GetExtension(faceIdDto.image.FileName);
-        if (string.IsNullOrEmpty(ext))
-            ext = ".png";
+    var ext = Path.GetExtension(faceIdDto.image.FileName);
+    if (string.IsNullOrEmpty(ext))
+        ext = ".png";
 
-        string fileName = $"faceId-{user.Id}{ext}";
-        string imageUrl;
+    string fileName = $"faceId-{user.Id}{ext}";
+    string? imageUrl;
 
-        try
-        {
-            imageUrl = await _imageService.UploadAsync(faceIdDto.image.OpenReadStream(), faceIdDto.image.ContentType, fileName);
-        }
-        catch
-        {
-            return (false, "Unable to upload image", null);
-        }
+    try
+    {
+        imageUrl = await _imageService.UploadAsync(faceIdDto.image.OpenReadStream(), faceIdDto.image.ContentType, fileName);
+    }
+    catch
+    {
+        return (false, "Unable to upload image", null);
+    }
 
-        if (string.IsNullOrEmpty(imageUrl))
-            return (false, "Unable to upload image", null);
+    if (string.IsNullOrEmpty(imageUrl))
+        return (false, "Unable to upload image", null);
 
-        string base64Image;
-        try
-        {
-            base64Image = await GenerateBase64PngImageAsync(imageUrl);
-        }
-        catch (Exception ex)
-        {
-            return (false, $"Unable to process image", null);
-        }
+    string base64Image;
+    try
+    {
+        base64Image = await GenerateBase64PngImageAsync(imageUrl);
+    }
+    catch
+    {
+        return (false, $"Unable to process image", null);
+    }
 
         if (string.IsNullOrEmpty(base64Image))
             return (false, "Unable to process image", null);
@@ -137,9 +137,9 @@ internal class FaceIdService : IFaceIdService
 
     public async Task<EmployeeFaceIdDto> GetFaceIdAsync(int employeeCode)
     {
-        AppUser user = await _userRepository.GetByCodeAsync(employeeCode);
-        if (user is null)
-            return FaceIdMapper.Empty();
+    AppUser? user = await _userRepository.GetByCodeAsync(employeeCode);
+    if (user is null)
+        return FaceIdMapper.Empty();
 
         FaceID? faceId = user.FaceID;
         string base64Image = faceId != null ? await GenerateBase64PngImageAsync(faceId!.ImageUrl) : string.Empty;

@@ -41,15 +41,14 @@ internal class AppUserServices : IAppUserServices
 
         string recoveryTokenPlain;
 
-        try
-        {
-            recoveryTokenPlain = _encryptionService.Decrypt(recoveryDto.Token);
-        }
-        catch (Exception ex)
-        {
-
-            return (false, "Invalid token");
-        }
+    try
+    {
+        recoveryTokenPlain = _encryptionService.Decrypt(recoveryDto.Token);
+    }
+    catch
+    {
+        return (false, "Invalid token");
+    }
 
         if (string.IsNullOrEmpty(recoveryTokenPlain) || !recoveryTokenPlain.Contains(':'))
             return (false, "Invalid token");
@@ -61,10 +60,10 @@ internal class AppUserServices : IAppUserServices
 
         string username = parts[1];
 
-        AppUser user = await _appUserRepository.GetByRecoveryTokenAsync(recoveryDto.Token);
+    AppUser? user = await _appUserRepository.GetByRecoveryTokenAsync(recoveryDto.Token);
 
-        if (user is null || !string.Equals(username, user.Email, StringComparison.OrdinalIgnoreCase))
-            return (false, "Invalid token");
+    if (user is null || !string.Equals(username, user.Email, StringComparison.OrdinalIgnoreCase))
+        return (false, "Invalid token");
 
         DateTime tokenDate;
 
@@ -103,10 +102,10 @@ internal class AppUserServices : IAppUserServices
 
     public async Task<(bool success, string message)> AccountRecoveryStartAsync(string username)
     {
-        AppUser user = await _appUserRepository.GetByUserNameAsync(username);
+    AppUser? user = await _appUserRepository.GetByUserNameAsync(username);
 
-        if (user is null)
-            return (false, "Account recovery was not successful.");
+    if (user is null)
+        return (false, "Account recovery was not successful.");
 
         if (!user.Active)
             return (false, "Account recovery was not successful.");
@@ -177,9 +176,9 @@ internal class AppUserServices : IAppUserServices
 
     public async Task<(bool success, string message, LoginResponseDto? data)> UserLoginAsync(UserCredentialsDto credentialsDto)
     {
-        AppUser user = await _appUserRepository.GetByUserNameAsync(credentialsDto.Username);
-        if (user is null)
-            return (false, "Incorrect username or password", null);
+    AppUser? user = await _appUserRepository.GetByUserNameAsync(credentialsDto.Username);
+    if (user is null)
+        return (false, "Incorrect username or password", null);
 
         if (!user.Active)
             return (false, "An error has occurred. Please contact the administrator", null);
