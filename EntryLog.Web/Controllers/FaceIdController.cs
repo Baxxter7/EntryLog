@@ -25,8 +25,8 @@ public class FaceIdController : Controller
     [HttpPost("empleado/faceid")]
     public async Task<JsonResult> CreateAsync([FromForm] AddEmployeeFaceIdDto faceIdDto)
     {
-        UserViewModel user = User.GetUserData()!;
-        (bool success, string message, EmployeeFaceIdDto data) = await _faceIdService.CreateEmployeeFaceIdAsync(
+    UserViewModel user = User.GetUserData()!;
+    (bool success, string message, EmployeeFaceIdDto? data) = await _faceIdService.CreateEmployeeFaceIdAsync(
             new AddEmployeeFaceIdDto(user.NameIdentifier, faceIdDto.image, faceIdDto.Descriptor));
 
         return Json(new

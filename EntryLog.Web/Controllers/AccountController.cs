@@ -27,7 +27,7 @@ namespace EntryLog.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> RegisterEmployeeUserAsync(CreateEmployeeUserDto model)
         {
-            (bool success, string message, LoginResponseDto data) = await _appUserServices.RegisterEmployeeAsync(model);
+            (bool success, string message, LoginResponseDto? data) = await _appUserServices.RegisterEmployeeAsync(model);
             //Loguear al empleado
 
             if (!success)
@@ -64,7 +64,7 @@ namespace EntryLog.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> LoginAsync(UserCredentialsDto model)
         {
-            (bool success, string message, LoginResponseDto data) = await _appUserServices.UserLoginAsync(model);
+            (bool success, string message, LoginResponseDto? data) = await _appUserServices.UserLoginAsync(model);
             //Loguear al empleado
 
             if (!success)

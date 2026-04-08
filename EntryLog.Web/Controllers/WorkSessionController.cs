@@ -42,8 +42,8 @@ public class WorkSessionController : Controller
     [HttpPost("/emleado/sessiones/abrir")]
     public async Task<JsonResult> OpenWorkSessionAsync(OpenWorkSessionViewModel model)
     {
-        UserViewModel userData = User.GetUserData()!;
-        (bool success, string message, GetWorkSessionDto data) = await _workSessionService.OpenJobSessionAsync(new CreateWorkSessionDto(
+    UserViewModel userData = User.GetUserData()!;
+    (bool success, string message, GetWorkSessionDto? data) = await _workSessionService.OpenSessionAsync(new CreateWorkSessionDto(
             userData.NameIdentifier.ToString(),
             model.Latitude,
             model.Longitude,
@@ -65,7 +65,7 @@ public class WorkSessionController : Controller
     public async Task<JsonResult> CloseWorkSessionAsync(CloseWorkSessionViewModel model)
     {
         UserViewModel userData = User.GetUserData()!;
-        (bool success, string message, GetWorkSessionDto? data) = await _workSessionService.ClosedJobSessionAsync(
+        (bool success, string message, GetWorkSessionDto? data) = await _workSessionService.ClosedSessionAsync(
              new CloseWorkSessionDto(
                  model.sessionId,
                  userData.NameIdentifier.ToString(),
