@@ -42,22 +42,22 @@ public class WorkSessionController : Controller
     [HttpPost("/emleado/sessiones/abrir")]
     public async Task<JsonResult> OpenWorkSessionAsync(OpenWorkSessionViewModel model)
     {
-    UserViewModel userData = User.GetUserData()!;
-    (bool success, string message, GetWorkSessionDto? data) = await _workSessionService.OpenSessionAsync(new CreateWorkSessionDto(
-            userData.NameIdentifier.ToString(),
-            model.Latitude,
-            model.Longitude,
-            model.Image,
-            model.Notes,
-            model.Descriptor
-            )
-        );
+        UserViewModel userData = User.GetUserData()!;
+        (bool success, string message, GetWorkSessionDto? data) = await _workSessionService.OpenSessionAsync(new CreateWorkSessionDto(
+                userData.NameIdentifier.ToString(),
+                model.Latitude,
+                model.Longitude,
+                model.Image,
+                model.Notes,
+                model.Descriptor
+                )
+            );
 
         return Json(new
         {
-            success, 
-            message, 
-            data 
+            success,
+            message,
+            data
         });
     }
 
@@ -83,5 +83,16 @@ public class WorkSessionController : Controller
             message,
             data
         });
+    }
+
+    [HttpGet("empleado/sesiones/{id}")]
+    public async Task<JsonResult> GetSessionInfoByIdAsync(string id)
+    {
+        var session = await _workSessionService.GetSessionByIdAsync( id );
+        return Json(
+            new { 
+                result = session 
+            }
+        );
     }
 }
