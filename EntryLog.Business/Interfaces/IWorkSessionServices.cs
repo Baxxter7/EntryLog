@@ -11,4 +11,5 @@ public interface IWorkSessionServices
     Task<GetWorkSessionDto?> GetSessionByIdAsync(string id);
     Task<PaginatedResult<GetWorkSessionDto>> GetSessionListByFilterAsync(WorkSessionQueryFilter filter);
     Task<bool> HasActiveAnySessionAsync(int employeeCode);
+    Task<IEnumerable<GetLocationDto>> GetLastLocationByEmployeeAsync(int employeeCode);
 }

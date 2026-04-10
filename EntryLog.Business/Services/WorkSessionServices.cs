@@ -272,4 +272,23 @@ internal class WorkSessionServices : IWorkSessionServices
         WorkSession? session = await _workSessionRepository.GetByIdAsync(guid);
         return WorkSessionMapper.MapToGetWorkSessionDto(session!);
     }
+
+    public async Task<IEnumerable<GetLocationDto>> GetLastLocationByEmployeeAsync(int employeeCode)
+    {
+        var filter = new WorkSessionQueryFilter
+        {
+            EmployeeId = employeeCode,
+            Sort = SortType.Descending,
+            PageIndex = 1,
+            PageSize = 5
+        };
+
+        PaginatedResult<GetWorkSessionDto> paginatedResult = await GetSessionListByFilterAsync(filter);
+
+        IEnumerable<GetWorkSessionDto>? lastSessions = paginatedResult.ResultsCount > 0 ? paginatedResult.Results : [];
+
+        IEnumerable<GetLocationDto> lastCheckInLocations = lastSessions?.Select(session => session.CheckIn.Location) ?? [];
+
+        return lastCheckInLocations;
+    }
 }
