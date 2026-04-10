@@ -14,7 +14,7 @@ internal static class WorkSessionMapper
             new GetCheckDto(
                 session.CheckIn.Method,
                 session.CheckIn.DeviceName,
-                TimeFunctions.GetCentralAmericaStandardTime(session.CheckIn.Date).ToString("yyyy-MM-dd hh:mm"),
+                TimeFunctions.GetCentralAmericaStandardTime(session.CheckIn.Date).ToString("yyyy-MM-dd hh:mm tt"),
                 new GetLocationDto(
                     session.CheckIn.Location.Latitude,
                     session.CheckIn.Location.Longitude,
@@ -25,7 +25,7 @@ internal static class WorkSessionMapper
                 session.CheckOut != null ? new GetCheckDto(
                 session.CheckOut.Method,
                 session.CheckOut.DeviceName,
-                TimeFunctions.GetCentralAmericaStandardTime(session.CheckOut.Date).ToString("yyyy-MM-dd hh:mm"),
+                TimeFunctions.GetCentralAmericaStandardTime(session.CheckOut.Date).ToString("yyyy-MM-dd hh:mm tt"),
                 new GetLocationDto(
                     session.CheckOut.Location.Latitude,
                     session.CheckOut.Location.Longitude,
