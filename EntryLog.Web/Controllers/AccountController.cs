@@ -84,5 +84,15 @@ namespace EntryLog.Web.Controllers
                 path = "/main/index"
             });
         }
+
+
+        [HttpGet("/cuenta/salir")]
+        [Authorize]
+        public async Task<IActionResult> LogOutAsync()
+        {
+            await HttpContext.SignOutCookiesAsync();
+            return RedirectToAction("Login");
+        }
+
     }
 }
