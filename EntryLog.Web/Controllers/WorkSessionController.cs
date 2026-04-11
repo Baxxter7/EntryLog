@@ -85,13 +85,13 @@ public class WorkSessionController : Controller
         });
     }
 
-    [HttpGet("empleado/sesiones/{id}")]
+    [HttpGet("empleado/sesion/detail")]
     public async Task<JsonResult> GetSessionInfoByIdAsync(string id)
     {
         var session = await _workSessionService.GetSessionByIdAsync( id );
         return Json(
             new { 
-                result = session 
+                data = session 
             }
         );
     }

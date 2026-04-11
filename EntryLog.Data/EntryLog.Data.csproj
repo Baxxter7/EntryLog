@@ -24,4 +24,8 @@
     <ProjectReference Include="..\EntryLog.Entities\EntryLog.Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="EntryLog.Tests" />
+  </ItemGroup>
+
 </Project>
