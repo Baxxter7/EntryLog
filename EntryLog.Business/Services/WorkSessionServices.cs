@@ -51,19 +51,19 @@ internal class WorkSessionServices : IWorkSessionServices
         if (activeSession is null)
             return (false, "There is no active session for the user", null);
 
-    List<float>? descriptor;
-    try
-    {
-        descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.Descriptor);
-    }
-    catch (Exception)
-    {
+        List<float>? descriptor;
+        try
+        {
+            descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.Descriptor);
+        }
+        catch (Exception)
+        {
 
-        throw;
-    }
+            throw;
+        }
 
-    if (descriptor is null)
-        throw new InvalidOperationException("Invalid descriptor format");
+        if (descriptor is null)
+            throw new InvalidOperationException("Invalid descriptor format");
 
         string extension = Path.GetExtension(sessionDto.Image.FileName);
         string filename = $"checkout-{DateTime.UtcNow}{extension}";
@@ -156,19 +156,19 @@ internal class WorkSessionServices : IWorkSessionServices
             return (false, "The employee has an active session", null);
         }
 
-    List<float>? descriptor;
+        List<float>? descriptor;
 
-    try
-    {
-        descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.descriptor);
-    }
-    catch (Exception)
-    {
-        return (false, "Descriptor is invalid", null);
-    }
+        try
+        {
+            descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.descriptor);
+        }
+        catch (Exception)
+        {
+            return (false, "Descriptor is invalid", null);
+        }
 
-    if (descriptor is null || descriptor.Count != DescriptorLength)
-        return (false, "Descriptor is invalid", null);
+        if (descriptor is null || descriptor.Count != DescriptorLength)
+            return (false, "Descriptor is invalid", null);
 
         string extension = Path.GetExtension(sessionDto.Image.FileName);
         string filename = $"checkIn-{DateTime.UtcNow}{extension}";
