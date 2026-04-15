@@ -18,7 +18,11 @@ internal static class WorkSessionMapper
                 new GetLocationDto(
                     session.CheckIn.Location.Latitude,
                     session.CheckIn.Location.Longitude,
-                    session.CheckIn.Location.IpAddress
+                    session.CheckIn.Location.IpAddress,
+                    session.CheckIn.Location.Country,
+                    session.CheckIn.Location.City,
+                    session.CheckIn.Location.Neighbourhood
+
                 ),
                 session.CheckIn.PhotoUrl,
                 session.CheckIn.Notes),
@@ -29,7 +33,10 @@ internal static class WorkSessionMapper
                 new GetLocationDto(
                     session.CheckOut.Location.Latitude,
                     session.CheckOut.Location.Longitude,
-                    session.CheckOut.Location.IpAddress
+                    session.CheckOut.Location.IpAddress,
+                    session.CheckOut.Location.Country,
+                    session.CheckOut.Location.City,
+                    session.CheckOut.Location.Neighbourhood
                 ),
                 session.CheckOut.PhotoUrl,
                 session.CheckOut.Notes) : null,
