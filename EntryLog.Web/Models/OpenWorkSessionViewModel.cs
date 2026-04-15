@@ -5,5 +5,8 @@ public record OpenWorkSessionViewModel(
     string Longitude,
     IFormFile Image,
     string? Notes,
-    string Descriptor
+    string Descriptor,
+    string Country,
+    string City,
+    string Neighbourhood
 );
