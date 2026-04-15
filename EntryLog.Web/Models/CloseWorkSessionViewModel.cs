@@ -6,5 +6,8 @@ public record CloseWorkSessionViewModel(
     string Longitude,
     IFormFile Image,
     string? Notes,
-    string Descriptor
+    string Descriptor,
+    string Country,
+    string City,
+    string Neighbourhood
 );
