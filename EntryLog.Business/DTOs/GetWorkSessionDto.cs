@@ -22,5 +22,8 @@ public record GetCheckDto(
 public record GetLocationDto(
    string Latitude,
    string Longitude,
-   string IpAddress
+   string IpAddress,
+   string Country,
+   string City,
+   string Neighbourhood
  );

@@ -8,5 +8,8 @@ public record CreateWorkSessionDto(
    string Longitude,
    IFormFile Image,
    string? Notes,
-   string descriptor
+   string Descriptor,
+   string Country,
+   string City,
+   string Neighbourhood
 );
