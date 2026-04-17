@@ -8,4 +8,5 @@ public interface IAppUserServices
     Task<(bool success, string message, LoginResponseDto? data)> UserLoginAsync(UserCredentialsDto credentialsDto);
     Task<(bool success, string message)> AccountRecoveryStartAsync(string username);
     Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto);
+    Task<UserInfoDto> GetUserInfoAsync(int code);
 }
