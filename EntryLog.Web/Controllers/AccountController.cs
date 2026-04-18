@@ -15,7 +15,7 @@ namespace EntryLog.Web.Controllers
             _appUserServices = appUserServices;
         }
 
-        [HttpGet]
+        [HttpGet("registro")]
         [AllowAnonymous]
         public IActionResult RegisterEmployeeUser()
         {
@@ -48,7 +48,7 @@ namespace EntryLog.Web.Controllers
             });
         }
 
-        [HttpGet]
+        [HttpGet("login")]
         [AllowAnonymous]
         public IActionResult Login()
         {
@@ -85,9 +85,15 @@ namespace EntryLog.Web.Controllers
             });
         }
 
+        [HttpGet("cuenta/miperfil")]
+        [Authorize (Roles = "Employee")]
+        public async Task <IActionResult> MyProfileAsync()
+        {
+            return View();
+        }
 
         [HttpGet("/cuenta/salir")]
-        [Authorize]
+    
         public async Task<IActionResult> LogOutAsync()
         {
             await HttpContext.SignOutCookiesAsync();
