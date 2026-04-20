@@ -1,20 +1,17 @@
 ﻿namespace EntryLog.Business.DTOs;
 
-public record UserInfoDto
-(
+public record UserInfoDto(
+    string ProfileImage,
     string Code,
     string Name,
     string Role,
-    string Active,
-    string Position,
+    bool IsActive,
     string PositionName,
     string PositionDescription,
     string Email,
-    string CellPhone, 
+    string CellPhone,
     string DateOfBirthDay,
-    string ProfileImage,
     string City,
-    bool IsFaceIdActive,
-    bool IsActive
+    bool IsFaceIdActive
 );
 
