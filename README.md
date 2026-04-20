@@ -128,27 +128,9 @@ dotnet test EntryLog.slnx
 
 ### AccountController (`/account`)
 
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/register-employee` | Registro de empleado |
-| POST | `/login` | Inicio de sesión |
-| POST | `/recovery-start` | Iniciar recuperación de cuenta |
-| POST | `/recovery-complete` | Completar recuperación de cuenta |
-
 ### WorkSessionController (`/worksession`)
 
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/open` | Abrir sesión de trabajo |
-| POST | `/close` | Cerrar sesión de trabajo |
-| POST | `/filter` | Filtrar sesiones |
-
 ### FaceIdController (`/faceid`)
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/` | Consultar Face ID |
-| POST | `/register` | Registrar Face ID |
 
 ## Patrones y prácticas
 
