@@ -89,6 +89,9 @@ internal class WorkSessionServices : IWorkSessionServices
         activeSession.CheckOut.Date = DateTime.UtcNow;
         activeSession.CheckOut.Location.Latitude = sessionDto.Latitude;
         activeSession.CheckOut.Location.Longitude = sessionDto.Longitude;
+        activeSession.CheckOut.Location.Country = sessionDto.Country;
+        activeSession.CheckOut.Location.City = sessionDto.City;
+        activeSession.CheckOut.Location.Neighbourhood = sessionDto.Neighbourhood;
         activeSession.CheckOut.Location.IpAddress = _uriService.RemoteIpAddress;
         activeSession.CheckOut.PhotoUrl = imageBBUrl;
         activeSession.CheckOut.Notes = sessionDto.Notes;
@@ -160,7 +163,7 @@ internal class WorkSessionServices : IWorkSessionServices
 
         try
         {
-            descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.descriptor);
+            descriptor = JsonSerializer.Deserialize<List<float>>(sessionDto.Descriptor);
         }
         catch (Exception)
         {
@@ -205,6 +208,9 @@ internal class WorkSessionServices : IWorkSessionServices
                     Latitude = sessionDto.Latitude,
                     Longitude = sessionDto.Longitude,
                     IpAddress = _uriService.RemoteIpAddress,
+                    City = sessionDto.City,
+                    Country = sessionDto.Country,
+                    Neighbourhood = sessionDto.Neighbourhood
                 },
                 Notes = sessionDto.Notes ?? null,
                 Descriptor = descriptor,
