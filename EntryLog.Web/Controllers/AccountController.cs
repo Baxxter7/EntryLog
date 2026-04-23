@@ -1,6 +1,7 @@
 ﻿using EntryLog.Business.DTOs;
 using EntryLog.Business.Interfaces;
 using EntryLog.Web.Extensions;
+using EntryLog.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,7 +49,6 @@ namespace EntryLog.Web.Controllers
             });
         }
 
-        [HttpGet("login")]
         [AllowAnonymous]
         public IActionResult Login()
         {
@@ -89,7 +89,8 @@ namespace EntryLog.Web.Controllers
         [Authorize (Roles = "Employee")]
         public async Task <IActionResult> MyProfileAsync()
         {
-            return View();
+            UserViewModel user = User.GetUserData()!;
+            return View(await _appUserServices.GetUserInfoAsync(user.NameIdentifier));
         }
 
         [HttpGet("/cuenta/salir")]
