@@ -49,7 +49,10 @@ public class WorkSessionController : Controller
                 model.Longitude,
                 model.Image,
                 model.Notes,
-                model.Descriptor
+                model.Descriptor,
+                model.Country,
+                model.City,
+                model.Neighbourhood
                 )
             );
 
@@ -73,7 +76,10 @@ public class WorkSessionController : Controller
                  model.Longitude,
                  model.Image,
                  model.Notes,
-                 model.Descriptor
+                 model.Descriptor,
+                 model.Country,
+                 model.City,
+                 model.Neighbourhood
              )
         );
 
@@ -88,10 +94,11 @@ public class WorkSessionController : Controller
     [HttpGet("empleado/sesion/detail")]
     public async Task<JsonResult> GetSessionInfoByIdAsync(string id)
     {
-        var session = await _workSessionService.GetSessionByIdAsync( id );
+        var session = await _workSessionService.GetSessionByIdAsync(id);
         return Json(
-            new { 
-                data = session 
+            new
+            {
+                data = session
             }
         );
     }
