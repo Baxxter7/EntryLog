@@ -16,6 +16,7 @@ internal class AppUserServices : IAppUserServices
     private readonly IEncryptionService _encryptionService;
     private readonly IEmailSenderService _emailSenderService;
     private readonly IUriService _uriService;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public AppUserServices(
         IEmployeeRepository employeeRepository,
@@ -23,7 +24,8 @@ internal class AppUserServices : IAppUserServices
         IPasswordHasherService hasherService,
         IEncryptionService encryptionService,
         IEmailSenderService emailSenderService,
-        IUriService uriService)
+        IUriService uriService,
+        IHttpClientFactory httpClientFactory)
     {
         _employeeRepository = employeeRepository;
         _appUserRepository = appUserRepository;
@@ -31,6 +33,7 @@ internal class AppUserServices : IAppUserServices
         _encryptionService = encryptionService;
         _emailSenderService = emailSenderService;
         _uriService = uriService;
+        _httpClientFactory = httpClientFactory;
     }
     public async Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto)
     {
@@ -197,6 +200,32 @@ internal class AppUserServices : IAppUserServices
         AppUser? user = await _appUserRepository.GetByCodeAsync(code);
         Employee? employee = await _employeeRepository.GetByCodeAsync(code);
 
-        return AppUserMapper.MapToUserInfoDto(user, employee, "123123");
+        string base64Image = string.Empty;
+
+        var imageUrl = user.FaceID?.ImageUrl;
+
+        if (!string.IsNullOrWhiteSpace(imageUrl))
+        {
+            base64Image = await GenerateBase64PngImageAsync(imageUrl);
+        }
+
+        return AppUserMapper.MapToUserInfoDto(user, employee, base64Image);
     }
+
+    private async Task<string> GenerateBase64PngImageAsync(string imageUrl)
+    {
+        using var client = _httpClientFactory.CreateClient();
+        using var response = await client.GetAsync(imageUrl, HttpCompletionOption.ResponseHeadersRead);
+
+        if (!response.IsSuccessStatusCode)
+            return string.Empty;
+
+        //"application/octet-stream"
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet/stream";
+
+        byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
+        var prefix = $"data:{contentType};base64,";
+        return prefix + Convert.ToBase64String(imageBytes);
+    }
+
 }
