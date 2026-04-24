@@ -16,7 +16,7 @@ namespace EntryLog.Web.Controllers
             _appUserServices = appUserServices;
         }
 
-        [HttpGet("registro")]
+        [HttpGet("registro", Name = "Register")]
         [AllowAnonymous]
         public IActionResult RegisterEmployeeUser()
         {
