@@ -37,54 +37,12 @@ internal class AppUserServices : IAppUserServices
     }
     public async Task<(bool success, string message)> AccountRecoveryCompleteAsync(AccountRecoveryDto recoveryDto)
     {
-        if (string.IsNullOrEmpty(recoveryDto.Token))
-            return (false, "Invalid token");
+        (bool success, string message, AppUser? user) = await ValidateRecoveryTokenInternalAsync(recoveryDto.Token);
 
-        if (string.IsNullOrEmpty(recoveryDto.Password) || recoveryDto.Password != recoveryDto.PasswordConf)
-            return (false, "Passwords do not match");
+        if (!success && user is null)
+            return (success, message);
 
-        string recoveryTokenPlain;
-
-        try
-        {
-            recoveryTokenPlain = _encryptionService.Decrypt(recoveryDto.Token);
-        }
-        catch
-        {
-            return (false, "Invalid token");
-        }
-
-        if (string.IsNullOrEmpty(recoveryTokenPlain) || !recoveryTokenPlain.Contains(':'))
-            return (false, "Invalid token");
-
-        string[] parts = recoveryTokenPlain.Split(':');
-
-        if (parts.Length != 2 || !long.TryParse(parts[0], out long ticks))
-            return (false, "Invalid token");
-
-        string username = parts[1];
-
-        AppUser? user = await _appUserRepository.GetByRecoveryTokenAsync(recoveryDto.Token);
-
-        if (user is null || !string.Equals(username, user.Email, StringComparison.OrdinalIgnoreCase))
-            return (false, "Invalid token");
-
-        DateTime tokenDate;
-
-        try
-        {
-            tokenDate = DateTime.FromBinary(ticks);
-        }
-        catch
-        {
-            return (false, "Invalid token");
-        }
-
-        var now = DateTime.UtcNow;
-
-        const int expirationMinutes = 30;
-
-        if (tokenDate <= now && (now - tokenDate).TotalMinutes <= expirationMinutes)
+        if (success)
         {
             user.Password = _hasherService.Hash(recoveryDto.Password);
             await FinalizeRecovery(user);
@@ -124,7 +82,7 @@ internal class AppUserServices : IAppUserServices
         var vars = new RecoveryAccountVariables
         {
             Name = user.Name,
-            Url = $"{_uriService.ApplicationURL}/account/recovery?token={recoveryToken}"
+            Url = $"{_uriService.ApplicationURL}/account/recovery?token={Uri.EscapeDataString(recoveryToken)}"
         };
 
         bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email, vars);
@@ -202,14 +160,14 @@ internal class AppUserServices : IAppUserServices
 
         string base64Image = string.Empty;
 
-        var imageUrl = user.FaceID?.ImageUrl;
+        string? imageUrl = user?.FaceID?.ImageUrl;
 
         if (!string.IsNullOrWhiteSpace(imageUrl))
         {
             base64Image = await GenerateBase64PngImageAsync(imageUrl);
         }
 
-        return AppUserMapper.MapToUserInfoDto(user, employee, base64Image);
+        return AppUserMapper.MapToUserInfoDto(user!, employee!, base64Image);
     }
 
     private async Task<string> GenerateBase64PngImageAsync(string imageUrl)
@@ -228,4 +186,67 @@ internal class AppUserServices : IAppUserServices
         return prefix + Convert.ToBase64String(imageBytes);
     }
 
+    public async Task<(bool success, string message)> ValidateRecoveryTokenAsync(string token)
+    {
+        (bool success, string message, AppUser? _) = await ValidateRecoveryTokenInternalAsync(token);
+
+        return (success, message);
+    }
+
+    public async Task<(bool success, string message, AppUser? user)> ValidateRecoveryTokenInternalAsync(string token)
+    {
+        if (string.IsNullOrEmpty(token))
+            return (false, "Invalid token", null);
+
+        string recoveryTokenPlain;
+
+        try
+        {
+            recoveryTokenPlain = _encryptionService.Decrypt(token);
+        }
+        catch
+        {
+            return (false, "Invalid token", null);
+        }
+
+        if (string.IsNullOrEmpty(recoveryTokenPlain) || !recoveryTokenPlain.Contains(':'))
+            return (false, "Invalid token", null);
+
+        string[] parts = recoveryTokenPlain.Split(':');
+
+        if (parts.Length != 2 || !long.TryParse(parts[0], out long ticks))
+            return (false, "Invalid token", null);
+
+        string username = parts[1];
+
+        AppUser? user = await _appUserRepository.GetByRecoveryTokenAsync(token);
+
+        if (user is null || !string.Equals(username, user.Email, StringComparison.OrdinalIgnoreCase))
+            return (false, "Invalid token", null);
+
+        DateTime tokenDate;
+
+        try
+        {
+            tokenDate = DateTime.FromBinary(ticks);
+        }
+        catch
+        {
+            return (false, "Invalid token", null);
+        }
+
+        var now = DateTime.UtcNow;
+
+        const int expirationMinutes = 30;
+
+        if (tokenDate <= now && (now - tokenDate).TotalMinutes <= expirationMinutes)
+        {
+            return (true, "Valid token", user!);
+        }
+        else
+        {
+            await FinalizeRecovery(user);
+            return (false, "Invalid or expired token", user!);
+        }
+    }
 }
