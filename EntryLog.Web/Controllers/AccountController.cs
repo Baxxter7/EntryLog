@@ -86,20 +86,59 @@ namespace EntryLog.Web.Controllers
         }
 
         [HttpGet("cuenta/miperfil")]
-        [Authorize (Roles = "Employee")]
-        public async Task <IActionResult> MyProfileAsync()
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> MyProfileAsync()
         {
             UserViewModel user = User.GetUserData()!;
             return View(await _appUserServices.GetUserInfoAsync(user.NameIdentifier));
         }
 
         [HttpGet("/cuenta/salir")]
-    
         public async Task<IActionResult> LogOutAsync()
         {
             await HttpContext.SignOutCookiesAsync();
             return RedirectToAction("Login");
         }
 
+        [HttpGet("cuenta/recuperar", Name = "GetRecover")]
+        public IActionResult Recover()
+        {
+            return View();
+        }
+
+        [HttpGet("cuenta/recuperar", Name = "PostRecover")]
+        public async Task<JsonResult> RecoverAsync([FromQuery] string email)
+        {
+            (bool success, string message) = await _appUserServices.AccountRecoveryStartAsync(email);
+
+            return Json(new
+            {
+                success,
+                message
+            });
+        }
+
+        [HttpGet("completar/recuperar", Name = "GetCompleteRecover")]
+        public async Task<IActionResult> CompleteRecover([FromQuery] string token)
+        {
+            (bool success, string message) = await _appUserServices.ValidateRecoveryTokenAsync(token);
+
+            ViewBag.Success = success;
+            ViewBag.Message = message;
+
+            return View();
+        }
+
+        [HttpPost("completar/recuperar", Name = "PostCompleteRecover")]
+        public async Task<JsonResult> CompleteRecoverAsync([FromQuery] AccountRecoveryDto model)
+        {
+            (bool success, string message) = await _appUserServices.AccountRecoveryCompleteAsync(model);
+
+            return Json(new
+            {
+                success,
+                message
+            });
+        }
     }
 }
