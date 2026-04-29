@@ -82,7 +82,7 @@ internal class AppUserServices : IAppUserServices
         var vars = new RecoveryAccountVariables
         {
             Name = user.Name,
-            Url = $"{_uriService.ApplicationURL}/account/recovery?token={Uri.EscapeDataString(recoveryToken)}"
+            Url =   $"{_uriService.ApplicationURL}/cuenta/completar_recuperar?token={Uri.EscapeDataString(recoveryToken)}"
         };
 
         bool isSend = await _emailSenderService.SendEmailWithTemplateAsync("RecoveryToken", user.Email, vars);
