@@ -98,8 +98,3 @@ appsettings.*.json
 # ==============================
 .coverage
 .coverlet/
-
-AGENTS.md
-planning.md
-docs/
-tests/
